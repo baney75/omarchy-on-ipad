@@ -74,6 +74,8 @@ class ProjectTests(unittest.TestCase):
         self.assertEqual(workflow_policy.main(), 0)
         codeql = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")
         self.assertIn("  actions: read\n", codeql)
+        self.assertIn("  workflow_dispatch:\n", codeql)
+        self.assertIn("github.event.repository.private == false", codeql)
 
     def test_live_progress_form_preserves_truth_and_safety_gates(self):
         form = (ROOT / ".github/ISSUE_TEMPLATE/progress-update.yml").read_text(encoding="utf-8")
