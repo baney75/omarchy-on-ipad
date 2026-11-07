@@ -491,6 +491,8 @@ class ResearchTaskTests(SandboxCase):
             "small utility": lambda t: t["model_preflight"].update(category="small_utility"),
             "no model card": lambda t: t["model_preflight"].update(model_card=None),
             "failed check": lambda t: t["model_preflight"]["task_checks"][0].update(outcome="fail"),
+            "conflicting check": lambda t: t["model_preflight"]["task_checks"].append(dict(t["model_preflight"]["task_checks"][0], outcome="fail")),
+            "duplicate check": lambda t: t["model_preflight"]["task_checks"].append(dict(t["model_preflight"]["task_checks"][0])),
             "obliterated without provenance": lambda t: t["model_preflight"].update(category="local_modified"),
         }
         for label, mutate in cases.items():

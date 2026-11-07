@@ -23,6 +23,7 @@ STEP 0. MODEL SUITABILITY PREFLIGHT. Do this before any substantive research.
 STEP 1. INTAKE. Read AGENTS.md, SECURITY.md, docs/CLAIM-LADDER.md, data/progress.json, existing contribution records, open and closed issues, and recorded negative results. Set each intake flag only after you did it. Restate the question with one falsifier and pass/fail criteria. Name the blocker and the evidence that would change a decision. Then run: python3 tools/contribute.py research check [[TASK_FILE]] --ready
 
 STEP 2. LOOP, within [[MAX_READS]] source reads or [[MAX_MINUTES]] minutes, whichever comes first.
+- Start only with an owner-approved task and tool allowlist enforced by the sandbox. You may run those bounded offline checks without asking for every command. Stop before expanding scope or permissions; unrestricted unattended shell access is excluded.
 - Work three to seven sub-questions, most relevant to the current blocker first.
 - Prefer primary sources at pinned revisions with dates. Separate established facts from hypotheses.
 - One controlled offline experiment per hypothesis, with a baseline, a control, and a reproducible command limited to [[MAX_COMMAND_SECONDS]] seconds and [[MAX_OUTPUT_BYTES]] bytes of output.

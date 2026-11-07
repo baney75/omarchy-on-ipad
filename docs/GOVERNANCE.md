@@ -18,6 +18,8 @@ Routine documentation and tests require one maintainer review. Changes to progre
 
 A contribution can be accurate yet remain unmerged if it exposes private data, creates unreasonable physical risk, lacks redistribution rights, duplicates work, or cannot change an implementation decision.
 
+Local validators check the structure of declared review records. A handle in JSON is not authenticated proof of who reviewed it. Maintainers must confirm review decisions on the referenced GitHub pull request before merging reviewed records. Neither a record nor an eligible model check grants repository permissions or trusted status.
+
 ## Contributor vetting
 
 Public contribution and trusted roles are different things.

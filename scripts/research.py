@@ -419,6 +419,9 @@ def preflight_gate(task: dict) -> tuple[bool, str]:
         return blocked(f"category {preflight['category']!r} does not qualify for security or boot-chain research")
     if preflight["model_card"] is None:
         return blocked("no model card or provenance source is cited")
+    check_names = [item["check"] for item in preflight["task_checks"]]
+    if len(check_names) != len(set(check_names)):
+        return blocked("each representative task check must have exactly one outcome; conflicting or duplicate outcomes are not accepted")
     passed = {item["check"] for item in preflight["task_checks"] if item["outcome"] == "pass"}
     missing = REQUIRED_TASK_CHECKS - passed
     if missing:
