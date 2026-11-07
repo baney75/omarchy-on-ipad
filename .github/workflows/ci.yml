@@ -31,7 +31,7 @@ jobs:
       - name: Build the dashboard
         run: python3 scripts/build_site.py --output _site
       - name: Reject unresolved template tokens
-        run: '! grep -R "{{" _site'
+        run: '! grep -R -I "{{" _site'
 
   secrets:
     name: Secret history scan
@@ -60,6 +60,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes clamav
       - name: Update signatures
-        run: sudo freshclam
+        run: |
+          sudo systemctl stop clamav-freshclam.service || true
+          sudo freshclam
       - name: Scan repository
         run: clamscan --recursive --infected --exclude-dir='^./.git$' .
