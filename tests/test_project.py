@@ -75,6 +75,12 @@ class ProjectTests(unittest.TestCase):
         codeql = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")
         self.assertIn("  actions: read\n", codeql)
 
+    def test_live_progress_form_preserves_truth_and_safety_gates(self):
+        form = (ROOT / ".github/ISSUE_TEMPLATE/progress-update.yml").read_text(encoding="utf-8")
+        self.assertIn("live public work log", form)
+        self.assertIn("not proof that Linux booted or Omarchy was installed", form)
+        self.assertIn("did not use malformed input, a device write, reboot/recovery action, or exploit payload", form)
+
 
 if __name__ == "__main__":
     unittest.main()

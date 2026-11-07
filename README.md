@@ -15,7 +15,7 @@ This is an open, evidence-driven effort to run [Omarchy](https://github.com/omac
 
 > **Current truth:** native Linux has not booted on the reference iPad, and Omarchy is not installed. The dashboard currently records **5 of 29** milestone checks passed.
 
-[Open the live progress dashboard](https://baney75.github.io/omarchy-on-ipad/) · [Pick a workstream](https://baney75.github.io/omarchy-on-ipad/#work) · [Contribute a device result](CONTRIBUTING.md)
+[Open the live progress dashboard](https://baney75.github.io/omarchy-on-ipad/) · [Publish a progress update](https://github.com/baney75/omarchy-on-ipad/issues/new?template=progress-update.yml) · [Contribute a device result](CONTRIBUTING.md)
 
 ![The live Omarchy on iPad dashboard showing honest milestone counts, blockers, workstreams, and device coverage](docs/assets/dashboard.png)
 
@@ -24,6 +24,7 @@ This is an open, evidence-driven effort to run [Omarchy](https://github.com/omac
 - **Live, not promotional.** Every merge rebuilds GitHub Pages from `data/progress.json` and reviewed contribution records.
 - **Evidence has levels.** Prepared work, offline verification, physical verification, and completion are different states.
 - **Other devices can join.** Owners of Apple-silicon iPads and Macs can submit sanitized, read-only device records and bounded research results.
+- **Work can be followed as it happens.** Contributors and disclosed agents can publish structured progress issues; only reviewed evidence changes the dashboard's claims.
 - **Agents can contribute safely.** `AGENTS.md` and `CLAUDE.md` give Daybreak, Claude Code, and local agents the same truth and safety contract.
 - **Security-sensitive work stays coordinated.** Possible entry paths and exploit details use private vulnerability reporting, not public issues.
 

@@ -15,6 +15,10 @@ Never commit or paste:
 
 ## Choose a contribution lane
 
+### 0. Live progress log
+
+Use the **Progress update** issue form while a bounded human or agent task is under way. Disclose the agent/model, select the evidence state, link only sanitized public evidence, and name the next pass/fail check. This is the fastest public update path, but it is not a verification path: an issue cannot change milestone counts or promote a claim. Reviewed evidence must land through a pull request.
+
 ### 1. Device and build matrix
 
 Use this for an Apple-silicon iPad you own or are authorized to test. On a Mac with Xcode command-line tools:

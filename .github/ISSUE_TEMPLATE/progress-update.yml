@@ -1,0 +1,73 @@
+name: Progress update
+description: Publish a safe, structured update while a human or agent works through a bounded research task.
+title: "progress: "
+labels: [research, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the live public work log. A progress issue does not change dashboard claims by itself; reviewed evidence must land in a pull request first. Do not post exploit details, identifiers, private paths, firmware, binaries, crash dumps, credentials, or unsafe device instructions.
+  - type: dropdown
+    id: workstream
+    attributes:
+      label: Workstream
+      options:
+        - Boot entry research
+        - J522 Linux board support
+        - Device and build matrix
+        - Omarchy platform integration
+        - Public infrastructure
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Human or agent
+      description: Name the human workflow or disclose the agent and model used.
+      placeholder: Human with GPT-6 Daybreak
+    validations:
+      required: true
+  - type: dropdown
+    id: state
+    attributes:
+      label: Evidence state
+      options:
+        - Active — work is under way; no passing result yet
+        - Prepared — written or staged; not verified
+        - Verified offline — a check passed on artifacts, not a device
+        - Verified physical — a valid check passed on owned hardware
+        - Blocked — a named condition prevents the next check
+    validations:
+      required: true
+  - type: textarea
+    id: update
+    attributes:
+      label: What changed?
+      description: State one narrow result, what it proves, and what it does not prove.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Public evidence
+      description: Link primary sources, a pull request, or sanitized text evidence. Do not attach protected or identifying material.
+    validations:
+      required: true
+  - type: textarea
+    id: next_check
+    attributes:
+      label: Next pass/fail check
+      description: Name the next check that could falsify or advance the claim.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-lane confirmation
+      options:
+        - label: This update contains no private identifier, credential, local path, copyrighted binary, or unpublished vulnerability detail.
+          required: true
+        - label: This work used only offline analysis or allowlisted read-only collection; it did not use malformed input, a device write, reboot/recovery action, or exploit payload.
+          required: true
+        - label: I understand this issue is a live work log, not proof that Linux booted or Omarchy was installed.
+          required: true
