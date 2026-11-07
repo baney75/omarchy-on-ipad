@@ -20,6 +20,8 @@ def main() -> int:
             failures.append(f"{path.name}: pull_request_target is forbidden")
         if re.search(r"permissions:\s*(?:write-all|read-all)", body):
             failures.append(f"{path.name}: broad permission alias is forbidden")
+        if "github/codeql-action/" in body and not re.search(r"(?m)^  actions:\s*read\s*$", body):
+            failures.append(f"{path.name}: CodeQL requires actions: read to inspect its workflow run")
         for line_number, line in enumerate(body.splitlines(), 1):
             match = USES_RE.match(line)
             if not match:

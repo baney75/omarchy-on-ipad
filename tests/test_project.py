@@ -72,6 +72,8 @@ class ProjectTests(unittest.TestCase):
 
     def test_workflows_are_pinned_and_avoid_pull_request_target(self):
         self.assertEqual(workflow_policy.main(), 0)
+        codeql = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")
+        self.assertIn("  actions: read\n", codeql)
 
 
 if __name__ == "__main__":
