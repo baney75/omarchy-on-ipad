@@ -61,6 +61,15 @@ class ProjectTests(unittest.TestCase):
             with self.assertRaises(validate.ValidationError):
                 validate.validate_progress(path)
 
+    def test_builder_refuses_unmarked_existing_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "not-ours"
+            output.mkdir()
+            (output / "keep.txt").write_text("keep", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                build_site.build(ROOT, output, "https://github.com/baney75/omarchy-on-ipad", "https://baney75.github.io/omarchy-on-ipad/")
+            self.assertEqual((output / "keep.txt").read_text(encoding="utf-8"), "keep")
+
     def test_workflows_are_pinned_and_avoid_pull_request_target(self):
         self.assertEqual(workflow_policy.main(), 0)
 
