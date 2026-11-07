@@ -1,0 +1,17 @@
+<li class="entry" id="entry-{{ID}}">
+  <div class="entry__head">
+    <h3 class="entry__claim">{{CLAIM}}</h3>
+    {{{STATE_BADGE}}}
+  </div>
+  <dl class="entry__facts">
+    <div><dt>Record</dt><dd><a class="mono" href="{{RECORD_URL}}">{{ID}}</a></dd></div>
+    <div><dt>Device</dt><dd class="mono">{{DEVICE}}</dd></div>
+    <div><dt>Workstream</dt><dd>{{WORKSTREAM}}</dd></div>
+    <div><dt>Contributor</dt><dd>{{CONTRIBUTOR}} · {{AGENT}}</dd></div>
+    <div><dt>Reviewed</dt><dd>{{REVIEWER}}, <time datetime="{{REVIEWED_AT}}">{{REVIEWED_AT_LABEL}}</time>, <a href="{{PULL_URL}}">pull request #{{PULL}}</a></dd></div>
+    <div><dt>Review note</dt><dd>{{REVIEW_SUMMARY}}</dd></div>
+  </dl>
+  <ul class="entry__evidence" aria-label="Evidence">
+    {{{EVIDENCE_ITEMS}}}
+  </ul>
+</li>

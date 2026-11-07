@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://baney75.github.io/omarchy-on-ipad/schemas/installation.schema.json",
+  "title": "Omarchy on iPad installation availability",
+  "description": "Source of truth for whether anything can be installed. While state is 'unavailable', releases must be empty. scripts/validate.py also refuses 'available' unless every progress milestone is complete, progress records installed systems and untethered cold boots, and each release cites reviewed verified_physical records for install, recovery, and rollback on its exact compatible devices.",
+  "type": "object",
+  "required": ["schema_version","state","summary","requirements","releases","updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {"type":"string"},
+    "schema_version": {"const":1},
+    "state": {"enum":["unavailable","available"]},
+    "summary": {"type":"string","minLength":20,"maxLength":600},
+    "updated_at": {"type":"string","format":"date-time"},
+    "requirements": {"type":"array","minItems":1,"items":{"type":"object","required":["id","title","detail"],"additionalProperties":false,"properties":{"id":{"type":"string","pattern":"^[a-z0-9-]+$"},"title":{"type":"string"},"detail":{"type":"string"}}}},
+    "releases": {"type":"array","items":{"$ref":"#/$defs/release"}}
+  },
+  "allOf": [
+    {"if":{"properties":{"state":{"const":"unavailable"}}},"then":{"properties":{"releases":{"maxItems":0}}},"else":{"properties":{"releases":{"minItems":1}}}}
+  ],
+  "$defs": {
+    "device": {"type":"object","required":["model","board","os_build"],"additionalProperties":false,"properties":{"model":{"type":"string","pattern":"^iPad[0-9]+,[0-9]+$"},"board":{"type":"string","pattern":"^[A-Z][0-9]{3,4}AP$"},"os_build":{"type":"string","pattern":"^[0-9]{2}[A-Z][0-9A-Za-z]+$"}}},
+    "release": {
+      "type":"object",
+      "required":["id","version","published_at","release_url","compatibility","artifacts","provenance","verification","review"],
+      "additionalProperties":false,
+      "properties":{
+        "id":{"type":"string","pattern":"^[a-z0-9-]+$"},
+        "version":{"type":"string","minLength":1,"maxLength":40},
+        "published_at":{"type":"string","format":"date-time"},
+        "release_url":{"type":"string","pattern":"^https://github\\.com/baney75/omarchy-on-ipad/releases/"},
+        "compatibility":{"type":"array","minItems":1,"items":{"$ref":"#/$defs/device"}},
+        "artifacts":{"type":"array","minItems":1,"items":{"type":"object","required":["name","url","sha256","size_bytes"],"additionalProperties":false,"properties":{"name":{"type":"string","pattern":"^[A-Za-z0-9._-]{1,120}$"},"url":{"type":"string","pattern":"^https://github\\.com/baney75/omarchy-on-ipad/releases/download/"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"size_bytes":{"type":"integer","minimum":1}}}},
+        "provenance":{"type":"object","required":["source_commit","build_recipe","attestation_url"],"additionalProperties":false,"properties":{"source_commit":{"type":"string","pattern":"^[a-f0-9]{40}$"},"build_recipe":{"type":"string"},"attestation_url":{"type":"string","pattern":"^https://github\\.com/baney75/omarchy-on-ipad/"}}},
+        "verification":{"type":"object","required":["install_evidence","recovery_evidence","rollback_evidence","cold_boots"],"additionalProperties":false,"properties":{"install_evidence":{"type":"array","minItems":1,"items":{"type":"string"}},"recovery_evidence":{"type":"array","minItems":1,"items":{"type":"string"}},"rollback_evidence":{"type":"array","minItems":1,"items":{"type":"string"}},"cold_boots":{"type":"integer","minimum":3}}},
+        "review":{"type":"object","required":["human_reviewer","security_reviewer","pull_request","reviewed_at"],"additionalProperties":false,"properties":{"human_reviewer":{"type":"string"},"security_reviewer":{"type":"string"},"pull_request":{"type":"integer","minimum":1},"reviewed_at":{"type":"string","format":"date-time"}}}
+      }
+    }
+  }
+}

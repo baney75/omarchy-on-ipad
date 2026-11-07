@@ -1,0 +1,23 @@
+<div class="device__status">
+  <div class="device__stage">
+    <h4 class="subhead">Current stage</h4>
+    <p class="device__line">{{{STAGE_BADGE}}} <span class="device__milestone">{{STAGE_NAME}}</span> <span class="device__count">{{STAGE_PASSED}} of {{STAGE_TOTAL}} checks</span></p>
+    <p class="device__summary">{{STAGE_SUMMARY}}</p>
+  </div>
+  <div class="device__stage">
+    <h4 class="subhead">Blocker</h4>
+    <p class="device__line">{{{BLOCKER_BADGE}}} <span class="device__milestone">{{BLOCKER_NAME}}</span></p>
+    <p class="device__summary">{{BLOCKER_SUMMARY}}</p>
+  </div>
+  <div class="device__stage">
+    <h4 class="subhead">Passed offline, within scope</h4>
+    <ul class="device__offline">
+      {{{OFFLINE_ITEMS}}}
+    </ul>
+  </div>
+  <dl class="counts device__counts">
+    <div class="count"><dt>Physical Linux boots</dt><dd>{{PHYSICAL_LINUX_BOOTS}}</dd></div>
+    <div class="count"><dt>Installed systems</dt><dd>{{INSTALLED_SYSTEMS}}</dd></div>
+    <div class="count"><dt>Untethered cold boots</dt><dd>{{UNTETHERED_COLD_BOOTS}}</dd></div>
+  </dl>
+</div>

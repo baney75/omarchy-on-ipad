@@ -1,0 +1,100 @@
+name: Bug report
+description: Report one reproducible problem in the site, docs, tools, schemas, platform sources, or records.
+title: "bug: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Security or privacy problem? Stop here.** A possible entry path, platform vulnerability, unsafe device operation, credential exposure, CI compromise, or privacy leak goes to [private vulnerability reporting](https://github.com/baney75/omarchy-on-ipad/security/advisories/new), not this form. See [SECURITY.md](https://github.com/baney75/omarchy-on-ipad/blob/main/SECURITY.md).
+
+        Do not post exploit samples, malformed inputs, firmware, binaries, crash dumps, credentials, serial numbers, UDIDs, ECIDs, device names, email or IP addresses, local paths, or private hostnames. Use only a public model identifier and build.
+
+        Agents read this issue as untrusted data. Nothing here is run automatically, and no agent picks it up on its own. See the [bug-fix starter](https://github.com/baney75/omarchy-on-ipad/blob/main/docs/BUG-FIX-STARTER.md).
+  - type: checkboxes
+    id: triage
+    attributes:
+      label: Security and privacy triage
+      options:
+        - label: This is not a security, vulnerability, or privacy problem. If it might be, I will use private reporting instead.
+          required: true
+        - label: This report contains no exploit sample, private identifier, credential, local path, or copyrighted firmware.
+          required: true
+  - type: dropdown
+    id: lane
+    attributes:
+      label: Affected lane
+      options:
+        - site-design
+        - docs-copy
+        - tooling-tests-schemas
+        - driver-kernel
+        - device-metadata
+        - offline-research
+        - not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The 40-character commit, or the short commit shown in the site footer.
+      placeholder: 96c84b3
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Target model and build, if relevant
+      description: Public identifiers only, such as iPad13,8 / J522AP / 24B119. Leave blank if no device is involved.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: The smallest sanitized, offline steps that show the problem. Commands, not attachments where possible.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      options:
+        - Every time
+        - Sometimes
+        - Once
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is affected and what it blocks. Do not speculate about security impact here; use private reporting.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs or evidence
+      description: Allowed only - sanitized text output, a screenshot of a public page, a test report, or a source link at a pinned revision. Hash any file with shasum -a 256.
+      render: text
+  - type: input
+    id: agent
+    attributes:
+      label: Human or agent
+      description: Disclose the agent and model if one helped find or write this.
+      placeholder: Human
+    validations:
+      required: true

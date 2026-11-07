@@ -7,6 +7,9 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+import sys
+if str(ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(ROOT / "scripts"))
 
 
 def load(name: str, path: Path):
@@ -17,10 +20,8 @@ def load(name: str, path: Path):
     return module
 
 
-validate = load("validate", ROOT / "scripts/validate.py")
-import sys
-sys.modules["validate"] = validate
-build_site = load("build_site", ROOT / "scripts/build_site.py")
+import validate  # noqa: E402
+import build_site  # noqa: E402
 collector = load("collect_readonly", ROOT / "tools/collect_readonly.py")
 workflow_policy = load("workflow_policy", ROOT / "scripts/workflow_policy.py")
 
