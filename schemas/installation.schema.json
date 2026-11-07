@@ -8,6 +8,8 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {"type":"string"},
+    "installable": {"type":"boolean"},
+    "progress_counts": {"type":"object","additionalProperties":false,"required":["physical_linux_boots","untethered_cold_boots","installed_systems"],"properties":{"physical_linux_boots":{"type":"integer","minimum":0},"untethered_cold_boots":{"type":"integer","minimum":0},"installed_systems":{"type":"integer","minimum":0}}},
     "schema_version": {"const":1},
     "state": {"enum":["unavailable","available"]},
     "summary": {"type":"string","minLength":20,"maxLength":600},

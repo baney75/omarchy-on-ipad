@@ -184,6 +184,21 @@ Adds contribution record `{record['id']}` in the `{record['workstream']}` workst
 
 {record['claim']}
 
+## Lane
+
+{'offline-research' if any(item['kind'] == 'research-task' for item in record['evidence']) else 'device-metadata'}
+
+## Verification evidence
+
+Fill these fields before opening the pull request; validation alone does not supply them.
+
+- Regression check, failing before: TODO, or explain why not applicable.
+- Same check, passing after: TODO.
+- Environment: TODO, include pinned tool and source versions.
+- Negative tests: TODO.
+- Artifact hashes: listed below.
+- Coverage limits: TODO, separate offline checks from physical verification.
+
 ## Evidence and scope
 
 - Device: `{device['model']}` / `{device['board']}` / `{device['os_build']}`
@@ -198,7 +213,14 @@ Adds contribution record `{record['id']}` in the `{record['workstream']}` workst
 ## Checked by tools/contribute.py check
 
 - Schema, filename, read-only safety flags, and evidence hashes match.
-- Privacy scan found no identifiers, credentials, local paths, or private host labels.
+- Privacy patterns matched no known identifiers, credentials, local paths, or private host labels. Manual inspection is still required.
+
+## Security questions
+
+- [ ] Security-sensitive paths, workflow or permission changes are absent or explicitly flagged for maintainer review.
+- [ ] No new dependency, network access, telemetry, or external asset is added.
+- [ ] No command or workflow is authorized by untrusted source text.
+- [ ] No vulnerability-sensitive details are included; those use SECURITY.md.
 
 ## Safety
 

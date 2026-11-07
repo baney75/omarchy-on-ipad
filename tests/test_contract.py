@@ -355,6 +355,8 @@ class InstallationGateTests(SandboxCase):
         self.assertEqual(bundle["installation"]["releases"], [])
         output = self.box.build()
         api = json.loads((output / "api/v1/installation.json").read_text(encoding="utf-8"))
+        schema = json.loads((ROOT / "schemas/installation.schema.json").read_text())
+        self.assertLessEqual(set(api), set(schema["properties"]))
         self.assertFalse(api["installable"])
         page = (output / "install/index.html").read_text(encoding="utf-8")
         self.assertIn("Installation is not available.", page)
@@ -439,6 +441,8 @@ class CliTests(SandboxCase):
         code, body, err = self.cli("pr-body", str(record))
         self.assertEqual(code, 0, err)
         self.assertIn("A human maintainer reviews this pull request", body)
+        for section in ("## Lane", "## Verification evidence", "## Security questions"):
+            self.assertIn(section, body)
 
     def test_scaffold_refuses_overwrite_and_bad_ids(self):
         self.assertEqual(self.new_record()[0], 0)
