@@ -14,7 +14,7 @@ from pathlib import Path
 
 from validate import (
     BOARD_RE, BUILD_RE, MODEL_RE, SHA_RE, ValidationError, date_string, exact_keys, fail, identifier,
-    load_json, nonnegative_int, text, timestamp,
+    ROOT, evidence_file, sha256_file, load_json, nonnegative_int, text, timestamp,
 )
 
 SCHEMA_VERSION = 1
@@ -85,7 +85,7 @@ def command_screen(command: str, where: str) -> None:
         fail(f"{where}: command uses a network, device, install, privilege, or destructive tool outside the public offline lane")
 
 
-def validate_task(path: Path, progress: dict, *, ready: bool = False, final: bool = False) -> dict:
+def validate_task(path: Path, progress: dict, *, ready: bool = False, final: bool = False, root: Path = ROOT) -> dict:
     """ready: intake and plan are complete. final: a terminal result is recorded."""
     data = load_json(path)
     required = {
@@ -309,6 +309,18 @@ def validate_task(path: Path, progress: dict, *, ready: bool = False, final: boo
         text(item["note"], f"{where}.note", 3, 400)
 
     validate_result(data, source_ids, final)
+    for item in data["result"]["evidence"]:
+        if item["path"].startswith("https://"):
+            continue  # Remote hashes are declarations; this offline validator never fetches them.
+        try:
+            relative = path.resolve().relative_to(root.resolve())
+        except ValueError:
+            fail("task.result.evidence: task must be inside the repository")
+        if len(relative.parts) < 3 or relative.parts[0] != "contributions":
+            fail("task.result.evidence: local evidence requires a task under contributions/<handle>/")
+        artifact = evidence_file(root, item["path"], relative.parts[1], "task.result.evidence")
+        if sha256_file(artifact) != item["sha256"]:
+            fail("task.result.evidence.sha256: does not match the evidence file")
     return data
 
 

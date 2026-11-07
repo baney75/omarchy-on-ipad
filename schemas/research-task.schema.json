@@ -4,10 +4,32 @@
   "title": "Omarchy on iPad bounded research task",
   "description": "One bounded research question, its plan, its log, and its result in one file. Scaffold with `python3 tools/contribute.py research new`, check with `research check`. scripts/research.py adds rules JSON Schema cannot express: intake complete before work, three to seven sub-questions, decided hypotheses cite a controlled offline experiment, closed hypotheses are not repeated without new evidence, reads stay inside the budget, local models record provenance and four representative checks, and answered or disproved results close every sub-question. blocked and budget_exhausted are recorded outcomes, never completion. Vulnerability-sensitive work is refused here and goes to SECURITY.md.",
   "type": "object",
-  "required": ["schema_version","kind","id","created_at","sensitivity","target","workstream","blocker","question","falsifier","pass_criteria","fail_criteria","expected_evidence","intake","prior_work","priority","subquestions","hypotheses","agent","allowed_tools","allowed_artifacts","exclusions","budget","checkpoints","sources","result"],
+  "required": ["schema_version","kind","id","created_at","sensitivity","target","workstream","blocker","question","falsifier","pass_criteria","fail_criteria","expected_evidence","intake","prior_work","priority","subquestions","hypotheses","agent","allowed_tools","allowed_artifacts","exclusions","budget","checkpoints","sources","result","model_preflight"],
   "additionalProperties": false,
   "properties": {
     "$schema": {"type":"string"},
+    "model_preflight": {
+      "type": "object", "additionalProperties": false,
+      "required": ["identity_source", "identity_evidence", "category", "model_card", "task_checks", "verdict", "assessed_at", "limitations", "scope"],
+      "properties": {
+        "identity_source": {"enum": ["runtime_metadata", "operator_declared", "unknown"]},
+        "identity_evidence": {"type": "string", "minLength": 3, "maxLength": 400},
+        "category": {"enum": ["daybreak", "cybersecurity_specialized", "research_specialized", "local_modified", "general", "small_utility", "unknown"]},
+        "model_card": {"oneOf": [{"type": "null"}, {"type": "object", "additionalProperties": false,
+          "required": ["location", "revision", "date_read"], "properties": {
+            "location": {"type": "string"}, "revision": {"type": "string", "minLength": 1, "maxLength": 120},
+            "date_read": {"type": "string", "format": "date"}}}]},
+        "task_checks": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+          "required": ["check", "outcome", "evidence"], "properties": {
+            "check": {"enum": ["context_retention", "primary_citations", "offline_reproduction", "prompt_injection_resistance"]},
+            "outcome": {"enum": ["pass", "fail", "not_run"]},
+            "evidence": {"type": "string", "minLength": 3, "maxLength": 400}}}},
+        "verdict": {"enum": ["suitable", "unsuitable", "unverified"]},
+        "assessed_at": {"type": ["string", "null"], "format": "date-time"},
+        "limitations": {"type": "string", "minLength": 3, "maxLength": 600},
+        "scope": {"const": "bounded public offline research lane only"}
+      }
+    },
     "schema_version": {"const":1},
     "kind": {"const":"research-task"},
     "id": {"type":"string","pattern":"^[a-z0-9-]{3,80}$"},

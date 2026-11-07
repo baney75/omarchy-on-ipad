@@ -229,6 +229,11 @@ def cmd_submit_plan(args) -> int:
     rel = str(path.relative_to(args.root))
     branch = f"contrib/{record['id']}"
     files = [rel] + [item["path"] for item in record["evidence"]]
+    for item in record["evidence"]:
+        if item["kind"] == "research-task":
+            task = validate.load_json(args.root / item["path"])
+            files.extend(row["path"] for row in task["result"]["evidence"] if not row["path"].startswith("https://"))
+    files = list(dict.fromkeys(files))
     body = f'"${{TMPDIR:-/tmp}}/omarchy-pr-{record["id"]}.md"'
     q = shlex.quote
     lines = [
@@ -249,6 +254,12 @@ def cmd_submit_plan(args) -> int:
 
 def scaffold_task(args, data: dict) -> dict:
     r = research.PLACEHOLDER
+    agent = {"kind": args.agent_kind, "provider": args.provider, "model_id": args.model_id,
+             "reasoning": args.reasoning, "used_on": now()[:10], "representative_checks": []}
+    if args.agent_kind in {"local", "local_modified"}:
+        agent.update({key: f"{r} {key}" for key in ("upstream_model", "revision", "quantization", "license", "provenance")})
+        agent["limitations"] = f"{r} task limitations; removing refusals is not evidence of accuracy or trust"
+        agent["representative_checks"] = [f"{r} {name} evidence" for name in sorted(research.REQUIRED_TASK_CHECKS)]
     return {
         "$schema": "../../../schemas/research-task.schema.json",
         "schema_version": research.SCHEMA_VERSION,
@@ -283,7 +294,7 @@ def scaffold_task(args, data: dict) -> dict:
         "priority": {"blocker_relevance": 0, "reachability": 0, "evidence_strength": 0, "information_gain": 0, "cost": 3, "rationale": f"{r} why this question, now, over the alternatives"},
         "subquestions": [{"id": f"q{index}", "text": f"{r} sub-question {index}", "state": "open", "sources": []} for index in (1, 2, 3)],
         "hypotheses": [{"id": "h1", "text": f"{r} one testable hypothesis", "state": "open", "experiment": None, "sources": [], "reopened_with": []}],
-        "agent": {"kind": args.agent_kind, "provider": args.provider, "model_id": args.model_id, "reasoning": args.reasoning, "used_on": now()[:10], "representative_checks": []},
+        "agent": agent,
         "allowed_tools": ["read repository files", "read cited public sources", "offline local analysis within the budget"],
         "allowed_artifacts": ["public source code and documentation at pinned revisions", "sanitized repository records"],
         "exclusions": sorted(research.REQUIRED_EXCLUSIONS),
@@ -307,7 +318,7 @@ def cmd_research_new(args) -> int:
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(task, indent=2) + "\n", encoding="utf-8")
     try:
-        research.validate_task(target, data)
+        research.validate_task(target, data, root=root)
     except validate.ValidationError:
         target.unlink()
         raise
@@ -325,7 +336,7 @@ def task_path(raw: str) -> Path:
 
 
 def cmd_research_check(args) -> int:
-    task = research.validate_task(task_path(args.task), progress(args.root), ready=args.ready or args.final, final=args.final)
+    task = research.validate_task(task_path(args.task), progress(args.root), ready=args.ready or args.final, final=args.final, root=args.root)
     eligible, message = research.preflight_gate(task)
     mode = "final" if args.final else "ready" if args.ready else "structure"
     print(f"{args.task}: PASS ({mode})")
@@ -336,7 +347,7 @@ def cmd_research_check(args) -> int:
 
 
 def cmd_research_preflight(args) -> int:
-    task = research.validate_task(task_path(args.task), progress(args.root))
+    task = research.validate_task(task_path(args.task), progress(args.root), root=args.root)
     eligible, message = research.preflight_gate(task)
     print(message)
     return 0 if eligible else 2
@@ -354,7 +365,7 @@ def prompt_template(root: Path) -> str:
 
 
 def cmd_research_prompt(args) -> int:
-    task = research.validate_task(task_path(args.task), progress(args.root))
+    task = research.validate_task(task_path(args.task), progress(args.root), root=args.root)
     target = task["target"]
     budget = task["budget"]
     values = {

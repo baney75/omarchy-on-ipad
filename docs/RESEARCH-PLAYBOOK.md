@@ -122,3 +122,5 @@ Submit through the normal pipeline:
 4. Follow [CONTRIBUTION-API.md](CONTRIBUTION-API.md) to open the pull request.
 
 A record published in the registry means a maintainer reviewed it for inclusion. It is not universal proof and not a safety guarantee.
+
+Local result evidence must exist inside the allowed public folders and match its SHA-256. Remote source URLs and their hashes are declarations: the offline validator does not fetch or authenticate them. Include sanitized local evidence for reproducible checks and let reviewers verify remote citations independently.

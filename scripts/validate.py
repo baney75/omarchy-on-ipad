@@ -350,7 +350,7 @@ def validate_contribution(path: Path, workstream_ids: set[str], root: Path = ROO
             if resolved.suffix != ".json":
                 fail(f"{where}: a research-task evidence file is JSON")
             import research  # local import: research.py builds on this module
-            research.validate_task(resolved, progress or validate_progress(root / "data/progress.json"), ready=True, final=True)
+            research.validate_task(resolved, progress or validate_progress(root / "data/progress.json"), ready=True, final=True, root=root)
     safety = data["safety"]
     if not isinstance(safety, dict):
         fail(f"{path}.safety: expected object")
@@ -457,7 +457,7 @@ def validate_release(release: object, where: str, physical: dict[str, dict]) -> 
     compatibility = release["compatibility"]
     if not isinstance(compatibility, list) or not compatibility:
         fail(f"{where}.compatibility: expected non-empty array of exact model/board/build entries")
-    pairs: set[tuple[str, str]] = set()
+    targets: set[tuple[str, str, str]] = set()
     for c_index, entry in enumerate(compatibility):
         c_where = f"{where}.compatibility[{c_index}]"
         if not isinstance(entry, dict):
@@ -469,7 +469,7 @@ def validate_release(release: object, where: str, physical: dict[str, dict]) -> 
             fail(f"{c_where}.board: invalid")
         if not BUILD_RE.fullmatch(text(entry["os_build"], f"{c_where}.os_build")):
             fail(f"{c_where}.os_build: invalid")
-        pairs.add((entry["model"], entry["os_build"]))
+        targets.add((entry["model"], entry["board"], entry["os_build"]))
     artifacts = release["artifacts"]
     if not isinstance(artifacts, list) or not artifacts:
         fail(f"{where}.artifacts: expected non-empty array")
@@ -502,6 +502,7 @@ def validate_release(release: object, where: str, physical: dict[str, dict]) -> 
     if nonnegative_int(verification["cold_boots"], f"{where}.verification.cold_boots") < 3:
         fail(f"{where}.verification.cold_boots: at least three untethered cold boots are required")
     for key in ("install_evidence", "recovery_evidence", "rollback_evidence"):
+        covered: set[tuple[str, str, str]] = set()
         ids = verification[key]
         if not isinstance(ids, list) or not ids:
             fail(f"{where}.verification.{key}: expected reviewed contribution ids")
@@ -509,8 +510,12 @@ def validate_release(release: object, where: str, physical: dict[str, dict]) -> 
             record = physical.get(record_id) if isinstance(record_id, str) else None
             if record is None:
                 fail(f"{where}.verification.{key}: {record_id!r} is not a reviewed verified_physical record")
-            if (record["device"]["model"], record["device"]["os_build"]) not in pairs:
+            target = tuple(record["device"][field] for field in ("model", "board", "os_build"))
+            if target not in targets:
                 fail(f"{where}.verification.{key}: {record_id} device is outside the release compatibility list")
+            covered.add(target)
+        if targets - covered:
+            fail(f"{where}.verification.{key}: missing physical evidence for compatible targets {sorted(targets - covered)}")
     review = release["review"]
     if not isinstance(review, dict):
         fail(f"{where}.review: expected object")

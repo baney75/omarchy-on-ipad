@@ -391,6 +391,8 @@ class InstallationGateTests(SandboxCase):
             "short commit": lambda r: r["provenance"].update(source_commit="abc"),
             "two cold boots": lambda r: r["verification"].update(cold_boots=2),
             "incompatible evidence": lambda r: r["compatibility"][0].update(os_build="24A100"),
+            "wrong board": lambda r: r["compatibility"][0].update(board="J523AP"),
+            "uncovered device": lambda r: r["compatibility"].append({"model": "iPad14,1", "board": "J523AP", "os_build": "24B119"}),
             "missing hash": lambda r: r["artifacts"][0].pop("sha256"),
         }
         for label, mutate in broken.items():
@@ -471,7 +473,25 @@ class ResearchTaskTests(SandboxCase):
         return path
 
     def check(self, task: dict, **flags) -> dict:
-        return research.validate_task(self.path(task), self.box.progress, **flags)
+        return research.validate_task(self.path(task), self.box.progress, root=self.box.root, **flags)
+
+    def test_local_result_evidence_must_exist_and_match_hash(self):
+        task = suitable_task()
+        task["result"]["evidence"] = [{"path": f"contributions/{HANDLE}/missing.txt", "sha256": SHA_ZERO}]
+        with self.assertRaises(validate.ValidationError):
+            self.check(task, final=True)
+        rel, digest = self.box.evidence("result.txt", "Reproducible public result.\n")
+        task["result"]["evidence"] = [{"path": rel, "sha256": SHA_ZERO}]
+        with self.assertRaisesRegex(validate.ValidationError, "does not match"):
+            self.check(task, final=True)
+        task["result"]["evidence"][0]["sha256"] = digest
+        self.check(task, final=True)
+        path = self.path(task)
+        record = self.box.record("octo-local-result", evidence=[{"kind": "research-task", "path": str(path.relative_to(self.box.root)), "sha256": sha(path)}])
+        record_path = self.box.write(record)
+        code, plan, err = run_cli("--root", str(self.box.root), "submit-plan", str(record_path))
+        self.assertEqual(code, 0, err)
+        self.assertIn(rel, next(line for line in plan.splitlines() if line.startswith("git add")))
 
     def test_suitable_conclusive_task_passes_final(self):
         task = self.check(suitable_task(), ready=True, final=True)
@@ -618,6 +638,31 @@ class ResearchTaskTests(SandboxCase):
         record = self.box.record("octo-unfinished", workstream="j522-linux", evidence=[{"kind": "research-task", "path": str(path.relative_to(self.box.root)), "sha256": sha(path)}])
         with self.assertRaises(validate.ValidationError):
             self.box.check(record, submission=True)
+
+    def test_local_model_task_scaffolds_but_cannot_start_unverified(self):
+        for kind in ("local", "local_modified"):
+            with self.subTest(kind=kind):
+                code, _, err = run_cli("--root", str(self.box.root), "research", "new", "--id", f"octo-{kind.replace('_', '-')}",
+                    "--contributor", HANDLE, "--agent-kind", kind, "--workstream", "j522-linux", "--milestone", "hardware",
+                    "--model", "iPad13,8", "--board", "J522AP", "--os-build", "24B119",
+                    "--scope", "Offline reading of public upstream sources only.", "--question", "Does the pinned driver list this board?",
+                    "--falsifier", "The board is absent at the pinned revision.")
+                self.assertEqual(code, 0, err)
+                path = self.box.root / f"contributions/{HANDLE}/research/octo-{kind.replace('_', '-')}.json"
+                self.assertEqual(run_cli("--root", str(self.box.root), "research", "preflight", str(path))[0], 2)
+                self.assertEqual(run_cli("--root", str(self.box.root), "research", "check", str(path), "--ready")[0], 1)
+
+    def test_published_schema_admits_required_preflight_contract(self):
+        schema = json.loads((ROOT / "schemas/research-task.schema.json").read_text())
+        task = suitable_task()
+        self.assertLessEqual(set(schema["required"]), set(task))
+        self.assertLessEqual(set(task), set(schema["properties"]))
+        self.assertIn("model_preflight", schema["required"])
+        preflight = schema["properties"]["model_preflight"]
+        self.assertEqual(set(preflight["required"]), set(task["model_preflight"]))
+        self.assertEqual(set(preflight["properties"]), set(task["model_preflight"]))
+        self.assertFalse(preflight["additionalProperties"])
+        self.assertEqual(preflight["properties"]["scope"]["const"], research.PREFLIGHT_SCOPE)
 
 
 class LaneAndPolicyTests(unittest.TestCase):
