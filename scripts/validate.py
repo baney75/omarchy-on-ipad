@@ -10,6 +10,7 @@ import re
 import sys
 from datetime import date, datetime
 from pathlib import Path
+from public_surface import PRIVATE_PATTERNS, EVIDENCE_PRIVATE_PATTERNS
 
 ROOT = Path(__file__).resolve().parents[1]
 STATES = {"blocked", "active", "prepared", "verified_offline", "verified_physical", "complete"}
@@ -265,6 +266,14 @@ def evidence_file(root: Path, raw_path: str, contributor: str, where: str) -> Pa
         fail(f"{where}: evidence file does not exist")
     if candidate.stat().st_size > MAX_EVIDENCE_BYTES:
         fail(f"{where}: evidence file exceeds {MAX_EVIDENCE_BYTES} bytes")
+    if candidate.suffix.lower() != ".png":
+        try:
+            body = candidate.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            fail(f"{where}: evidence must be UTF-8 text")
+        for label, pattern in {**PRIVATE_PATTERNS, **EVIDENCE_PRIVATE_PATTERNS}.items():
+            if pattern.search(body):
+                fail(f"{where}: contains {label}")
     return candidate
 
 

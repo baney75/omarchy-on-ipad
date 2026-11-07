@@ -493,6 +493,19 @@ class ResearchTaskTests(SandboxCase):
         self.assertEqual(code, 0, err)
         self.assertIn(rel, next(line for line in plan.splitlines() if line.startswith("git add")))
 
+    def test_nested_result_private_data_is_rejected_before_submission(self):
+        task = suitable_task()
+        rel, digest = self.box.evidence("result.txt", "Contact " + "researcher" + "@" + "example.com" + " for the result.\n")
+        task["result"]["evidence"] = [{"path": rel, "sha256": digest}]
+        path = self.path(task)
+        record = self.box.record("octo-private-result", evidence=[{"kind": "research-task", "path": str(path.relative_to(self.box.root)), "sha256": sha(path)}])
+        with self.assertRaisesRegex(validate.ValidationError, "email address"):
+            self.box.check(record, submission=True)
+        record_path = self.box.write(record)
+        code, _, err = run_cli("--root", str(self.box.root), "submit-plan", str(record_path))
+        self.assertEqual(code, 1)
+        self.assertIn("email address", err)
+
     def test_suitable_conclusive_task_passes_final(self):
         task = self.check(suitable_task(), ready=True, final=True)
         self.assertTrue(research.is_complete(task))

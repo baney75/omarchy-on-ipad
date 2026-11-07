@@ -31,15 +31,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import contract  # noqa: E402
 import research  # noqa: E402
 import validate  # noqa: E402
-from public_surface import PRIVATE_PATTERNS  # noqa: E402
+from public_surface import PRIVATE_PATTERNS, EVIDENCE_PRIVATE_PATTERNS  # noqa: E402
 
 UPSTREAM = "baney75/omarchy-on-ipad"
-EXTRA_PATTERNS = {
-    "email address": re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
-    "IPv4 address": re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"),
-    "ECID-like value": re.compile(r"(?i)\becid\b\s*[:=]?\s*(?:0x)?[0-9a-f]{8,}"),
-    "serial-number field": re.compile(r"(?i)\bserial(?:[ _-]?number)?\b\s*[:=]\s*\S+"),
-}
+EXTRA_PATTERNS = EVIDENCE_PRIVATE_PATTERNS
 TEXT_SUFFIXES = {".txt", ".json", ".md", ".csv", ".log"}
 PROMPT_START = "<!-- prompt:start -->"
 PROMPT_END = "<!-- prompt:end -->"
