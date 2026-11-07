@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://baney75.github.io/omarchy-on-ipad/schemas/registry.schema.json",
+  "title": "Omarchy on iPad public registry",
+  "description": "Generated at build time from reviewed repository data. Only maintainer-reviewed records appear in entries; unreviewed records are counted in summary.awaiting_review. Devices come from data/progress.json goal and coverage only.",
+  "type": "object",
+  "required": ["contract_version","current_truth","review_states","summary","entries","devices","installation_state"],
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {"const": 1},
+    "current_truth": {"type": "string"},
+    "installation_state": {"enum": ["unavailable","available"]},
+    "review_states": {"type":"array","items":{"type":"object","required":["id","meaning","listed_in_registry"],"additionalProperties":false,"properties":{"id":{"enum":["submitted","verified_offline","verified_physical","rejected"]},"meaning":{"type":"string"},"listed_in_registry":{"type":"boolean"}}}},
+    "summary": {"type":"object","required":["reviewed","awaiting_review","verified_offline","verified_physical","rejected"],"additionalProperties":false,"properties":{"reviewed":{"type":"integer","minimum":0},"awaiting_review":{"type":"integer","minimum":0},"verified_offline":{"type":"integer","minimum":0},"verified_physical":{"type":"integer","minimum":0},"rejected":{"type":"integer","minimum":0}}},
+    "entries": {"type":"array","items":{"$ref":"#/$defs/entry"}},
+    "devices": {"$ref":"#/$defs/devices"}
+  },
+  "$defs": {
+    "entry": {
+      "type":"object",
+      "required":["id","status","contributor","agent","device","workstream","claim","recorded_at","record_url","evidence","review"],
+      "additionalProperties":false,
+      "properties":{
+        "id":{"type":"string","pattern":"^[a-z0-9-]{3,80}$"},
+        "status":{"enum":["verified_offline","verified_physical","rejected"]},
+        "contributor":{"type":"string"},
+        "agent":{"type":"string"},
+        "device":{"type":"object","required":["model","board","os_build"],"additionalProperties":false,"properties":{"model":{"type":"string"},"board":{"type":"string"},"os_build":{"type":"string"}}},
+        "workstream":{"type":"string"},
+        "claim":{"type":"string"},
+        "recorded_at":{"type":"string","format":"date-time"},
+        "record_url":{"type":"string","format":"uri"},
+        "evidence":{"type":"array","minItems":1,"items":{"type":"object","required":["kind","path","sha256","url"],"additionalProperties":false,"properties":{"kind":{"type":"string"},"path":{"type":"string"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"url":{"type":"string","format":"uri"}}}},
+        "review":{"type":"object","required":["reviewer","reviewed_at","pull_request","pull_request_url","summary"],"additionalProperties":false,"properties":{"reviewer":{"type":"string"},"reviewed_at":{"type":"string","format":"date-time"},"pull_request":{"type":"integer","minimum":1},"pull_request_url":{"type":"string","format":"uri"},"summary":{"type":"string"}}}
+      }
+    },
+    "milestone": {"type":"object","required":["id","name","state","passed","total","summary"],"additionalProperties":false,"properties":{"id":{"type":"string"},"name":{"type":"string"},"state":{"type":"string"},"passed":{"type":"integer"},"total":{"type":"integer"},"summary":{"type":"string"}}},
+    "devices": {
+      "type":"object",
+      "required":["source","current_truth","devices","other_devices"],
+      "additionalProperties":false,
+      "properties":{
+        "source":{"type":"string"},
+        "current_truth":{"type":"string"},
+        "devices":{"type":"array","items":{
+          "type":"object",
+          "required":["family","models","builds","level","contributors","role"],
+          "additionalProperties":false,
+          "properties":{
+            "family":{"type":"string"},
+            "models":{"type":"array","items":{"type":"string"}},
+            "builds":{"type":"array","items":{"type":"string"}},
+            "level":{"enum":["reported","reference","verified_offline","verified_physical"]},
+            "contributors":{"type":"integer","minimum":1},
+            "role":{"enum":["reference","contributed"]},
+            "reference_target":{"type":"string"},
+            "reference_build":{"type":"string"},
+            "status":{"type":"object","required":["current_stage","blocker","verified_offline","physical_linux_boots","installed_systems","untethered_cold_boots"],"additionalProperties":false,"properties":{
+              "current_stage":{"oneOf":[{"$ref":"#/$defs/milestone"},{"type":"null"}]},
+              "blocker":{"oneOf":[{"$ref":"#/$defs/milestone"},{"type":"null"}]},
+              "verified_offline":{"type":"array","items":{"$ref":"#/$defs/milestone"}},
+              "physical_linux_boots":{"type":"integer","minimum":0},
+              "installed_systems":{"type":"integer","minimum":0},
+              "untethered_cold_boots":{"type":"integer","minimum":0}
+            }}
+          }
+        }},
+        "other_devices":{"type":"object","required":["state","summary","request_id"],"additionalProperties":false,"properties":{"state":{"const":"welcome"},"summary":{"type":"string"},"request_id":{"type":["string","null"]}}}
+      }
+    }
+  }
+}

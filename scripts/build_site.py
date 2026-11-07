@@ -12,17 +12,17 @@ import subprocess
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from validate import ROOT, validate_progress
+import contract
+from contract import STATE_LABELS
+from validate import ROOT, validate_all
 
-STATE_LABELS = {
-    "blocked": "Blocked",
-    "active": "Active",
-    "prepared": "Prepared",
-    "verified_offline": "Verified offline",
-    "verified_physical": "Verified physical",
-    "complete": "Complete",
-}
 TOKEN_RE = re.compile(r"\{\{\{?[A-Z0-9_]+\}?\}\}")
+PLACEHOLDER_RE = re.compile(r"\{\{\{([A-Z0-9_]+)\}\}\}|\{\{([A-Z0-9_]+)\}\}")
+
+
+def escape(value: object) -> str:
+    """HTML-escape text and encode braces so data can never form a template token."""
+    return html.escape(str(value), quote=True).replace("{", "&#123;").replace("}", "&#125;")
 
 
 def read(path: Path) -> str:
@@ -30,20 +30,15 @@ def read(path: Path) -> str:
 
 
 def fill(template: str, context: dict[str, object]) -> str:
-    def raw(match: re.Match[str]) -> str:
-        key = match.group(1)
-        if key not in context:
-            raise KeyError(f"missing raw template value {key}")
-        return str(context[key])
-
-    def escaped(match: re.Match[str]) -> str:
-        key = match.group(1)
+    """Single pass: values inserted here are never scanned for placeholders again."""
+    def replace(match: re.Match[str]) -> str:
+        raw_key, text_key = match.group(1), match.group(2)
+        key = raw_key or text_key
         if key not in context:
             raise KeyError(f"missing template value {key}")
-        return html.escape(str(context[key]), quote=True)
+        return str(context[key]) if raw_key else escape(context[key])
 
-    rendered = re.sub(r"\{\{\{([A-Z0-9_]+)\}\}\}", raw, template)
-    rendered = re.sub(r"\{\{([A-Z0-9_]+)\}\}", escaped, rendered)
+    rendered = PLACEHOLDER_RE.sub(replace, template)
     survivor = TOKEN_RE.search(rendered)
     if survivor:
         raise ValueError(f"unfilled placeholder {survivor.group(0)}")
@@ -83,7 +78,8 @@ def prepare_output(root: Path, output: Path) -> None:
 
 
 def build(root: Path, output: Path, repo_url: str, site_url: str) -> None:
-    data = validate_progress(root / "data/progress.json")
+    bundle = validate_all(root)
+    data = bundle["progress"]
     template_root = root / "site/templates"
     partial_root = template_root / "partials"
 
@@ -149,12 +145,124 @@ def build(root: Path, output: Path, repo_url: str, site_url: str) -> None:
         "REQUEST_ITEMS": items_or_empty(requests, "No contribution requests are open."),
     }
 
+    registry = contract.registry(bundle, repo_url)
+    installation = contract.installation(bundle)
+    request_id = registry["devices"]["other_devices"]["request_id"]
+    device_html = render_devices(partial, badge, registry["devices"], f"#request-{request_id}" if request_id else context["CONTRIBUTE_URL"])
+    context["DEVICE_ITEMS"] = device_html
+    context["LANE_ITEMS"] = "\n".join(partial("lane", {"ID": lane["id"], "TITLE": lane["title"], "MODEL": lane["model_requirement"]}) for lane in contract.LANES)
+    context["LANES_URL"] = contract.blob(repo_url, "AGENTS.md") + "#contribution-lanes"
+    context["BUG_REPORT_URL"] = f"{repo_url}/issues/new?template=bug-report.yml"
+    context["RESEARCH_PLAYBOOK_URL"] = contract.blob(repo_url, contract.POLICY_PATHS["research_playbook"])
+    context["INSTALL_STATE_LABEL"] = "Available" if installation["installable"] else "Not available"
+
+    def chrome(base: str, current: str) -> dict[str, object]:
+        values = dict(context, BASE=base, CURRENT_REGISTRY=' aria-current="page"' if current == "registry" else "", CURRENT_INSTALL=' aria-current="page"' if current == "install" else "")
+        return {"SITE_HEADER": partial("site-header", values), "SITE_FOOTER": partial("site-footer", values)}
+
+    def subpage(name: str, title: str, description: str, extra: dict[str, object]) -> str:
+        page_context = dict(context, **chrome("../", name), **extra)
+        page_context["PAGE_HEAD"] = partial("page-head", dict(page_context, PAGE_TITLE=title, PAGE_DESCRIPTION=description, PAGE_URL=contract.site(site_url, f"{name}/"), PAGE_JSON=f"../api/v1/{'registry' if name == 'registry' else 'installation'}.json"))
+        return fill(read(template_root / f"{name}.html"), page_context)
+
+    summary = registry["summary"]
+    entries = [render_entry(partial, badge, item, workstream_names) for item in registry["entries"]]
+    review_states = [partial("review-state", {"BADGE": badge(item["id"]), "MEANING": item["meaning"], "LISTED": "Listed in the registry." if item["listed_in_registry"] else "Counted, not listed."}) for item in contract.REVIEW_STATES]
+    registry_page = subpage("registry", "Registry", f"Reviewed contributions and devices being worked on. {data['goal']['current_truth']}", {
+        "SUMMARY_REVIEWED": summary["reviewed"], "SUMMARY_VERIFIED_OFFLINE": summary["verified_offline"],
+        "SUMMARY_VERIFIED_PHYSICAL": summary["verified_physical"], "SUMMARY_REJECTED": summary["rejected"],
+        "SUMMARY_AWAITING_REVIEW": summary["awaiting_review"],
+        "ENTRY_ITEMS": items_or_empty(entries, "No reviewed contributions yet. Submitted records appear here only after a maintainer review."),
+        "REVIEW_STATE_ITEMS": "\n".join(review_states),
+        "CONTRIBUTION_API_URL": contract.blob(repo_url, contract.POLICY_PATHS["contribution_api"]),
+    })
+    releases = [render_release(partial, item, repo_url) for item in installation["releases"]] if installation["installable"] else []
+    requirements = [partial("requirement", {"ID": item["id"], "TITLE": item["title"], "DETAIL": item["detail"]}) for item in installation["requirements"]]
+    install_page = subpage("install", "Installation", installation["summary"], {
+        "INSTALL_HEADLINE": "A reviewed release is available." if installation["installable"] else "Installation is not available.",
+        "INSTALL_SUMMARY": installation["summary"], "RELEASE_COUNT": len(releases),
+        "RELEASE_ITEMS": items_or_empty(releases, "No release exists. Nothing here can be downloaded or installed."),
+        "REQUIREMENT_ITEMS": "\n".join(requirements),
+    })
+    context.update(chrome("", "index"))
+
     prepare_output(root, output)
     (output / "index.html").write_text(fill(read(template_root / "index.html"), context), encoding="utf-8")
+    for name, body in (("registry", registry_page), ("install", install_page)):
+        (output / name).mkdir()
+        (output / name / "index.html").write_text(body, encoding="utf-8")
     shutil.copytree(root / "site/assets", output / "assets")
     shutil.copytree(root / "schemas", output / "schemas")
-    (output / "robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")
-    (output / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{html.escape(site_url)}</loc><lastmod>{data["project"]["updated_at"][:10]}</lastmod></url></urlset>\n', encoding="utf-8")
+    api = output / contract.API_PREFIX
+    api.mkdir(parents=True)
+    (api / "index.json").write_text(contract.dumps(contract.index(bundle, repo_url, site_url)), encoding="utf-8")
+    (api / "progress.json").write_text(contract.dumps(contract.progress(bundle)), encoding="utf-8")
+    (api / "registry.json").write_text(contract.dumps(registry), encoding="utf-8")
+    (api / "installation.json").write_text(contract.dumps(installation), encoding="utf-8")
+    (output / "llms.txt").write_text(contract.llms_txt(bundle, repo_url, site_url), encoding="utf-8")
+    (output / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {contract.site(site_url, 'sitemap.xml')}\n", encoding="utf-8")
+    lastmod = data["project"]["updated_at"][:10]
+    urls = "".join(f"<url><loc>{html.escape(contract.site(site_url, path))}</loc><lastmod>{lastmod}</lastmod></url>" for path in ("", "registry/", "install/"))
+    (output / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n', encoding="utf-8")
+
+
+def render_devices(partial, badge, view: dict, request_url: str) -> str:
+    parts = []
+    for item in view["devices"]:
+        facts = []
+        if item["role"] == "reference":
+            facts.append(partial("device-fact", {"LABEL": "Reference target", "VALUE": item["reference_target"], "CLASS": "mono"}))
+            facts.append(partial("device-fact", {"LABEL": "Reference build", "VALUE": item["reference_build"], "CLASS": "mono"}))
+        facts.append(partial("device-fact", {"LABEL": "Models", "VALUE": ", ".join(item["models"]), "CLASS": "mono"}))
+        facts.append(partial("device-fact", {"LABEL": "Builds", "VALUE": ", ".join(item["builds"]), "CLASS": "mono"}))
+        facts.append(partial("device-fact", {"LABEL": "Coverage level", "VALUE": item["level"].replace("_", " ").capitalize(), "CLASS": ""}))
+        status_html = ""
+        status = item.get("status")
+        if status:
+            stage = status["current_stage"] or {"state": "complete", "name": "All milestones complete", "passed": 0, "total": 0, "summary": ""}
+            blocker = status["blocker"] or {"state": "active", "name": "No milestone is blocked", "summary": ""}
+            offline = [partial("device-offline", {"BADGE": badge(row["state"]), "NAME": row["name"], "PASSED": row["passed"], "TOTAL": row["total"], "SUMMARY": row["summary"]}) for row in status["verified_offline"]]
+            status_html = partial("device-status", {
+                "STAGE_BADGE": badge(stage["state"]), "STAGE_NAME": stage["name"], "STAGE_PASSED": stage["passed"], "STAGE_TOTAL": stage["total"], "STAGE_SUMMARY": stage["summary"],
+                "BLOCKER_BADGE": badge(blocker["state"]), "BLOCKER_NAME": blocker["name"], "BLOCKER_SUMMARY": blocker["summary"],
+                "OFFLINE_ITEMS": "\n".join(offline) if offline else partial("empty", {"TEXT": "No offline checks have passed yet."}),
+                "PHYSICAL_LINUX_BOOTS": status["physical_linux_boots"], "INSTALLED_SYSTEMS": status["installed_systems"], "UNTETHERED_COLD_BOOTS": status["untethered_cold_boots"],
+            })
+        anchor = re.sub(r"[^a-z0-9]+", "-", item["family"].lower()).strip("-") or "device"
+        role = "Reference device, being worked on" if item["role"] == "reference" else "Contributor report, not a Linux test"
+        parts.append(partial("device", {"ANCHOR": anchor, "FAMILY": item["family"], "ROLE_LABEL": role, "DEVICE_FACTS": "\n".join(facts), "DEVICE_STATUS": status_html}))
+    if not parts:
+        parts.append('<p class="empty">No device coverage recorded yet.</p>')
+    parts.append(partial("device-others", {"SUMMARY": view["other_devices"]["summary"], "REQUEST_URL": request_url}))
+    return "\n".join(parts)
+
+
+def render_entry(partial, badge, item: dict, workstream_names: dict[str, str]) -> str:
+    evidence = [partial("registry-evidence", {"URL": row["url"], "PATH": row["path"], "KIND": row["kind"], "SHA256": row["sha256"]}) for row in item["evidence"]]
+    device = item["device"]
+    review = item["review"]
+    return partial("registry-entry", {
+        "ID": item["id"], "CLAIM": item["claim"], "STATE_BADGE": badge(item["status"]), "RECORD_URL": item["record_url"],
+        "DEVICE": f"{device['model']} / {device['board']} / {device['os_build']}",
+        "WORKSTREAM": workstream_names.get(item["workstream"], item["workstream"]),
+        "CONTRIBUTOR": item["contributor"], "AGENT": item["agent"],
+        "REVIEWER": review["reviewer"], "REVIEWED_AT": review["reviewed_at"], "REVIEWED_AT_LABEL": format_timestamp(review["reviewed_at"]),
+        "PULL_URL": review["pull_request_url"], "PULL": review["pull_request"], "REVIEW_SUMMARY": review["summary"],
+        "EVIDENCE_ITEMS": "\n".join(evidence),
+    })
+
+
+def render_release(partial, item: dict, repo_url: str) -> str:
+    artifacts = [partial("release-artifact", {"NAME": row["name"], "SIZE": row["size_bytes"], "SHA256": row["sha256"]}) for row in item["artifacts"]]
+    review = item["review"]
+    return partial("release", {
+        "ID": item["id"], "VERSION": item["version"],
+        "COMPATIBILITY": "; ".join(f"{row['model']} / {row['board']} / {row['os_build']}" for row in item["compatibility"]),
+        "SOURCE_COMMIT": item["provenance"]["source_commit"], "RELEASE_URL": item["release_url"],
+        "HUMAN_REVIEWER": review["human_reviewer"], "SECURITY_REVIEWER": review["security_reviewer"],
+        "PULL_URL": f"{repo_url}/pull/{review['pull_request']}", "PULL": review["pull_request"],
+        "ARTIFACT_ITEMS": "\n".join(artifacts),
+    })
 
 
 def main() -> int:

@@ -24,6 +24,14 @@ PRIVATE_PATTERNS = {
     "Slack token": re.compile(r"\bxox[baprs]-[A-Za-z0-9-]+\b"),
 }
 
+# Contribution evidence has stricter rules than documentation or test source.
+EVIDENCE_PRIVATE_PATTERNS = {
+    "email address": re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
+    "IPv4 address": re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"),
+    "ECID-like value": re.compile(r"(?i)\becid\b\s*[:=]?\s*(?:0x)?[0-9a-f]{8,}"),
+    "serial-number field": re.compile(r"(?i)\bserial(?:[ _-]?number)?\b\s*[:=]\s*\S+"),
+}
+
 
 def tracked_paths(root: Path) -> list[Path]:
     result = subprocess.run(["git", "ls-files", "-co", "--exclude-standard", "-z"], cwd=root, capture_output=True, check=True)

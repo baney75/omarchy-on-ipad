@@ -86,6 +86,19 @@ When a list is empty, render `empty.html` (an `<li>`) with a plain sentence such
 | `verified_physical` | Verified physical | chartreuse `--signal` | solid diamond |
 | `complete` | Complete | chartreuse `--signal` | solid disc |
 
+### Registry, installation, devices, and lanes
+
+The builder also renders `registry.html` and `install.html` to `registry/index.html` and `install/index.html`. All three pages share `site-header.html` and `site-footer.html`, which take `BASE` (`""` or `"../"`) and the raw `CURRENT_REGISTRY` / `CURRENT_INSTALL` attributes for `aria-current`. Subpages start with `page-head.html`.
+
+| Partial | Source |
+| --- | --- |
+| `device.html`, `device-fact.html`, `device-status.html`, `device-offline.html`, `device-others.html` | `contract.devices()`: `goal`, `coverage`, `milestones`, and `counts` only. No other hardware attribute is ever added. |
+| `registry-entry.html`, `registry-evidence.html`, `review-state.html` | `contract.registry()`: reviewed contribution records only |
+| `requirement.html`, `release.html`, `release-artifact.html` | `data/installation.json`; releases render only when the validator accepts an available state |
+| `lane.html` | `contract.LANES` |
+
+Escaped values also encode `{` and `}`, and `fill()` substitutes in one pass, so record text can never form a template token. The same build writes `llms.txt` and `api/v1/*.json` from the same structures.
+
 ## Visual tokens
 
 All in `:root` at the top of `site.css`.

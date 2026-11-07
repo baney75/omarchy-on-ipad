@@ -15,7 +15,7 @@ This is an open, evidence-driven effort to run [Omarchy](https://github.com/omac
 
 > **Current truth:** native Linux has not booted on the reference iPad, and Omarchy is not installed. The dashboard currently records **5 of 29** milestone checks passed.
 
-[Open the live progress dashboard](https://baney75.github.io/omarchy-on-ipad/) · [Publish a progress update](https://github.com/baney75/omarchy-on-ipad/issues/new?template=progress-update.yml) · [Contribute a device result](CONTRIBUTING.md)
+[Open the live progress dashboard](https://baney75.github.io/omarchy-on-ipad/) · [Reviewed registry](https://baney75.github.io/omarchy-on-ipad/registry/) · [Installation status: not available](https://baney75.github.io/omarchy-on-ipad/install/) · [Publish a progress update](https://github.com/baney75/omarchy-on-ipad/issues/new?template=progress-update.yml) · [Report a bug](https://github.com/baney75/omarchy-on-ipad/issues/new?template=bug-report.yml) · [Contribute](CONTRIBUTING.md)
 
 ![The live Omarchy on iPad dashboard showing honest milestone counts, blockers, workstreams, and device coverage](docs/assets/dashboard.png)
 
@@ -25,7 +25,9 @@ This is an open, evidence-driven effort to run [Omarchy](https://github.com/omac
 - **Evidence has levels.** Prepared work, offline verification, physical verification, and completion are different states.
 - **Other devices can join.** Owners of Apple-silicon iPads and Macs can submit sanitized, read-only device records and bounded research results.
 - **Work can be followed as it happens.** Contributors and disclosed agents can publish structured progress issues; only reviewed evidence changes the dashboard's claims.
-- **Agents can contribute safely.** `AGENTS.md` and `CLAUDE.md` give Daybreak, Claude Code, and local agents the same truth and safety contract.
+- **Agents can contribute safely.** `AGENTS.md` is the one contract for every lane, from design and docs to drivers and research; `CLAUDE.md` points to it. Agents discover it through [`llms.txt`](https://baney75.github.io/omarchy-on-ipad/llms.txt) and the versioned [`api/v1`](https://baney75.github.io/omarchy-on-ipad/api/v1/index.json) contract.
+- **Research is bounded.** The [research playbook](docs/RESEARCH-PLAYBOOK.md) starts with a model suitability preflight and keeps every task to one question, a budget, and a recorded result.
+- **Nothing to install yet.** No iPad installer or release exists. The installation page lists what a future release must prove first.
 - **Security-sensitive work stays coordinated.** Possible entry paths and exploit details use private vulnerability reporting, not public issues.
 
 ## The path to the goal
@@ -56,13 +58,14 @@ Do not post a suspected exploit, malformed sample, firmware payload, device secr
 ## How the live site works
 
 ```text
-data/progress.json + data/contributions/*.json
+data/progress.json + data/contributions/*.json + data/installation.json
                  │
-          schema and truth checks
+          schema, truth, evidence-hash, and review checks
                  │
        dependency-free Python builder
                  │
-        generated static GitHub Pages
+  static GitHub Pages: dashboard, registry, install status,
+  llms.txt, and api/v1 JSON
 ```
 
 Pull requests run data validation, privacy and artifact gates, unit tests, a malware scan, and a clean site build. Merges to `main` deploy the site. External contributors never receive deployment credentials.
@@ -75,7 +78,8 @@ Pull requests run data validation, privacy and artifact gates, unit tests, a mal
 | `schemas/` | Machine-readable contracts for progress and contributions |
 | `site/` | Accessible, dependency-free dashboard templates and original visual assets |
 | `scripts/` | Validation, public-surface checks, and the static site builder |
-| `tools/` | Safe contributor tools, beginning with the read-only inventory collector |
+| `tools/` | Safe contributor tools: the read-only inventory collector and the contribution CLI |
+| `platform/` | Public kernel patches, device trees, and packaging recipes (none yet) |
 | `docs/` | Roadmap, claim ladder, governance, credits, brand, and sharing material |
 | `.github/` | CI, Pages, issue forms, dependency updates, and review ownership |
 

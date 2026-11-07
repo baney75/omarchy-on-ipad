@@ -85,6 +85,7 @@ img, svg { display: block; max-width: 100%; }
 
 a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
 a:hover { text-decoration-thickness: 2px; }
+dd > a { display: inline-flex; align-items: center; min-height: 24px; }
 
 :focus-visible { outline: var(--focus); outline-offset: 3px; border-radius: var(--r-sm); }
 main:focus { outline: none; }
@@ -539,6 +540,91 @@ h1 {
 .disclosure { max-width: 64ch; color: var(--text-muted); font-size: var(--step--1); }
 
 .empty { padding-block: var(--s-4); color: var(--text-faint); font-size: var(--step--1); }
+
+/* Extra review states used by the registry */
+.state--submitted { color: var(--text-muted); }
+.state--submitted::before {        /* dashed ring */
+  border: 2px dashed currentColor;
+  border-radius: var(--r-pill);
+}
+.state--rejected { color: var(--risk); }
+.state--rejected::before {         /* open cross: a bar */
+  border: 2px solid currentColor;
+  height: 4px;
+}
+
+/* Devices */
+.device { display: grid; gap: var(--s-5); padding-block: var(--s-5); border-top: 1px solid var(--rule-strong); }
+@media (min-width: 960px) {
+  .device { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; grid-template-areas: "head status" "facts status"; align-items: start; column-gap: var(--s-8); row-gap: var(--s-4); }
+  .device__head { grid-area: head; }
+  .device__facts { grid-area: facts; }
+  .device__status { grid-area: status; }
+}
+.device > * { min-width: 0; }
+.device__head { display: grid; gap: var(--s-1); }
+.device__name { font-size: var(--step-2); }
+.device__role { color: var(--signal); font-size: var(--step--1); font-weight: 600; }
+.device__facts { display: grid; gap: var(--s-2); font-size: var(--step--1); }
+.device__facts > div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s-3); }
+.device__facts dt { color: var(--text-muted); }
+@media (max-width: 419px) { .device__facts > div { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+.device__status { display: grid; gap: var(--s-5); }
+.device__stage .subhead { margin-bottom: var(--s-2); }
+.device__line { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-3); }
+.device__milestone { font-weight: 600; }
+.device__count { color: var(--text-muted); font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.device__summary { margin-top: var(--s-1); max-width: 62ch; color: var(--text-muted); font-size: var(--step--1); }
+.device__offline { display: grid; gap: var(--s-3); }
+.device__counts { padding-top: var(--s-4); border-top: 1px solid var(--rule); }
+@media (min-width: 560px) { .device__counts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.device-others { margin-top: var(--s-2); padding-top: var(--s-5); border-top: 1px solid var(--rule); max-width: 64ch; }
+.device-others__title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-3); margin-bottom: var(--s-2); font-size: var(--step-1); }
+.device-others p { color: var(--text-muted); }
+.device-others p + p { margin-top: var(--s-2); }
+
+/* Subpages: registry and installation */
+.page-head { display: grid; gap: var(--s-5); padding-block: var(--s-5) var(--s-7); }
+@media (min-width: 960px) { .page-head { padding-block: var(--s-8) var(--s-8); } }
+.page-head .eyebrow { margin-bottom: 0; }
+.page-head__machine { color: var(--text-muted); font-size: var(--step--1); }
+.registry__counts { padding-top: var(--s-5); border-top: 1px solid var(--rule); }
+@media (min-width: 720px) { .registry__counts { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.install__truth { grid-area: auto; max-width: 48rem; }
+.install__counts { margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--rule); }
+
+.entries { border-top: 1px solid var(--rule); }
+.entry { padding-block: var(--s-5); border-bottom: 1px solid var(--rule); }
+.entry__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s-2) var(--s-4); }
+.entry__claim { max-width: 62ch; font-size: var(--step-1); }
+.entry__facts { display: grid; gap: var(--s-2); margin-top: var(--s-4); font-size: var(--step--1); }
+.entry__facts > div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s-3); }
+.entry__facts dt { color: var(--text-muted); }
+@media (max-width: 419px) { .entry__facts > div { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+.entry__evidence { display: grid; gap: var(--s-2); margin-top: var(--s-4); font-size: var(--step--1); }
+.entry__kind { color: var(--text-muted); }
+.entry__hash { color: var(--text-faint); overflow-wrap: anywhere; }
+
+.requirements { counter-reset: requirement; display: grid; border-top: 1px solid var(--rule); }
+@media (min-width: 960px) { .requirements { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-7); } }
+.requirement { counter-increment: requirement; min-width: 0; padding-block: var(--s-5); border-bottom: 1px solid var(--rule); }
+.requirement__title { font-size: var(--step-1); }
+.requirement__title::before { content: counter(requirement, decimal-leading-zero) "\00a0\00a0"; color: var(--text-faint); font-family: var(--font-mono); font-size: var(--step--1); font-weight: 400; }
+.requirement__detail { margin-top: var(--s-2); max-width: 62ch; color: var(--text-muted); }
+
+.site-nav a[aria-current="page"] { color: var(--text); text-decoration: underline; text-decoration-color: var(--signal); text-underline-offset: 0.35em; }
+
+/* Contribution lanes */
+.lanes { display: grid; border-top: 1px solid var(--rule); }
+@media (min-width: 720px) { .lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-7); } }
+@media (min-width: 960px) { .lanes { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--s-5); } }
+.lane { min-width: 0; padding-block: var(--s-4); border-bottom: 1px solid var(--rule); }
+.lane__title { display: grid; gap: var(--s-1); font-size: var(--step-0); }
+.lane__id { color: var(--text-faint); font-size: var(--step--1); font-weight: 400; }
+.lane__model { margin-top: var(--s-2); color: var(--text-muted); font-size: var(--step--1); }
+.contribute__links { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); margin-block: var(--s-5) var(--s-3); }
+.contribute__requests { margin-top: var(--s-7); }
 
 /* Footer */
 .site-footer { border-top: 1px solid var(--rule); }

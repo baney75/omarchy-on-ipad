@@ -1,0 +1,51 @@
+{{{PAGE_HEAD}}}
+{{{SITE_HEADER}}}
+  <main id="main" tabindex="-1">
+    <section class="page-head wrap" aria-labelledby="page-title">
+      <p class="eyebrow"><span class="eyebrow__tag">Unofficial</span> Public registry</p>
+      <h1 id="page-title">Reviewed contributions</h1>
+      <p class="lede">Every entry is a repository record that a maintainer reviewed in a pull request. Unreviewed submissions are counted here but never listed. {{CURRENT_TRUTH}}</p>
+      <dl class="counts registry__counts">
+        <div class="count"><dt>Reviewed</dt><dd>{{SUMMARY_REVIEWED}}</dd></div>
+        <div class="count"><dt>Verified offline</dt><dd>{{SUMMARY_VERIFIED_OFFLINE}}</dd></div>
+        <div class="count"><dt>Verified physical</dt><dd>{{SUMMARY_VERIFIED_PHYSICAL}}</dd></div>
+        <div class="count"><dt>Rejected</dt><dd>{{SUMMARY_REJECTED}}</dd></div>
+        <div class="count"><dt>Awaiting review</dt><dd>{{SUMMARY_AWAITING_REVIEW}}</dd></div>
+      </dl>
+      <p class="page-head__machine">Machine-readable: <a class="mono" href="../api/v1/registry.json">api/v1/registry.json</a> · schema <a class="mono" href="../schemas/registry.schema.json">registry.schema.json</a></p>
+    </section>
+
+    <section class="section wrap" id="entries" aria-labelledby="entries-title">
+      <div class="section__head">
+        <h2 id="entries-title">Entries</h2>
+        <p class="section__sub">Newest review first. Each entry links its record, its SHA-256 pinned evidence, and the pull request where it was reviewed.</p>
+      </div>
+      <ol class="entries">
+        {{{ENTRY_ITEMS}}}
+      </ol>
+    </section>
+
+    <section class="section wrap" id="devices" aria-labelledby="devices-title">
+      <div class="section__head">
+        <h2 id="devices-title">Devices being worked on</h2>
+        <p class="section__sub">Taken from the public reference target and coverage records. No other hardware detail is published.</p>
+      </div>
+      {{{DEVICE_ITEMS}}}
+    </section>
+
+    <section class="section wrap" id="review-states" aria-labelledby="review-states-title">
+      <div class="section__head">
+        <h2 id="review-states-title">Review states</h2>
+        <p class="section__sub">Contributors always submit as awaiting review. Only a maintainer named in CODEOWNERS, who is not the contributor, can record a review.</p>
+      </div>
+      <dl class="legend__list">
+        {{{REVIEW_STATE_ITEMS}}}
+      </dl>
+      <div class="contribute__foot">
+        <a class="action-link" href="{{CONTRIBUTION_API_URL}}">Prepare and submit a record</a>
+      </div>
+    </section>
+  </main>
+{{{SITE_FOOTER}}}
+</body>
+</html>

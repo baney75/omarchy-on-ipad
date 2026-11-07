@@ -1,0 +1,17 @@
+{
+  "$schema": "../schemas/installation.schema.json",
+  "schema_version": 1,
+  "state": "unavailable",
+  "summary": "Installation is not available. No iPad installer, image, or release exists, and native Linux has not booted on the reference iPad. Treat any download that claims to install Omarchy on an iPad as untrusted.",
+  "updated_at": "2026-11-07T20:19:09Z",
+  "requirements": [
+    {"id": "model-build-compatibility", "title": "Exact model and build compatibility", "detail": "Each release names every supported model identifier, board, and iPadOS build. A release never applies to a model or build it does not list."},
+    {"id": "artifact-hashes", "title": "Pinned artifact hashes", "detail": "Every downloadable artifact has a SHA-256 hash and byte size recorded in this repository, published only as a GitHub release of this project."},
+    {"id": "provenance", "title": "Build provenance", "detail": "Each release records the 40-character source commit, a repository-relative build recipe, and a build attestation that a reviewer can check against the artifacts."},
+    {"id": "recovery-verified", "title": "Recovery verified on hardware", "detail": "Reviewed physical evidence shows that every compatible model returns to a working iPadOS state after installation and after a failed installation."},
+    {"id": "rollback-verified", "title": "Rollback verified on hardware", "detail": "Reviewed physical evidence shows a complete rollback to the prior state, with at least three untethered cold boots recorded before the release."},
+    {"id": "human-review", "title": "Human maintainer review", "detail": "A maintainer reviews the release record, its evidence, and its instructions in a pull request before anything is offered."},
+    {"id": "security-review", "title": "Independent security review", "detail": "A second person, not the human maintainer reviewer, reviews device safety, recovery risk, and disclosure before the release is offered."}
+  ],
+  "releases": []
+}

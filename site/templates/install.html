@@ -1,0 +1,45 @@
+{{{PAGE_HEAD}}}
+{{{SITE_HEADER}}}
+  <main id="main" tabindex="-1">
+    <section class="page-head wrap" aria-labelledby="page-title">
+      <p class="eyebrow"><span class="eyebrow__tag">Unofficial</span> Installation status</p>
+      <h1 id="page-title">{{INSTALL_HEADLINE}}</h1>
+      <div class="hero__truth install__truth">
+        <h2 class="label">Current state</h2>
+        <p class="truth">{{INSTALL_SUMMARY}}</p>
+        <dl class="counts install__counts">
+          <div class="count"><dt>Releases</dt><dd>{{RELEASE_COUNT}}</dd></div>
+          <div class="count"><dt>Physical Linux boots</dt><dd>{{COUNT_PHYSICAL_LINUX_BOOTS}}</dd></div>
+          <div class="count"><dt>Installed systems</dt><dd>{{COUNT_INSTALLED_SYSTEMS}}</dd></div>
+          <div class="count"><dt>Untethered cold boots</dt><dd>{{COUNT_UNTETHERED_COLD_BOOTS}}</dd></div>
+        </dl>
+      </div>
+      <p class="page-head__machine">Machine-readable: <a class="mono" href="../api/v1/installation.json">api/v1/installation.json</a> · schema <a class="mono" href="../schemas/installation.schema.json">installation.schema.json</a></p>
+    </section>
+
+    <section class="section wrap" id="releases" aria-labelledby="releases-title">
+      <div class="section__head">
+        <h2 id="releases-title">Releases</h2>
+        <p class="section__sub">A release appears here only after the repository checks accept its evidence and two different people review it.</p>
+      </div>
+      <ol class="entries">
+        {{{RELEASE_ITEMS}}}
+      </ol>
+    </section>
+
+    <section class="section wrap" id="requirements" aria-labelledby="requirements-title">
+      <div class="section__head">
+        <h2 id="requirements-title">What a release must prove first</h2>
+        <p class="section__sub">The validator refuses an available state until every milestone is complete and each requirement below has reviewed evidence.</p>
+      </div>
+      <ol class="requirements">
+        {{{REQUIREMENT_ITEMS}}}
+      </ol>
+      <div class="contribute__foot">
+        <p class="disclosure">Found a possible entry path? Report it privately through the <a href="{{SECURITY_URL}}">security policy</a>, not in a public issue.</p>
+      </div>
+    </section>
+  </main>
+{{{SITE_FOOTER}}}
+</body>
+</html>

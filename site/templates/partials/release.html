@@ -1,0 +1,15 @@
+<li class="entry" id="release-{{ID}}">
+  <div class="entry__head">
+    <h3 class="entry__claim">Release {{VERSION}}</h3>
+    <span class="state state--complete">Reviewed release</span>
+  </div>
+  <dl class="entry__facts">
+    <div><dt>Compatible with</dt><dd class="mono">{{COMPATIBILITY}}</dd></div>
+    <div><dt>Source commit</dt><dd class="mono">{{SOURCE_COMMIT}}</dd></div>
+    <div><dt>Release page</dt><dd><a href="{{RELEASE_URL}}">{{RELEASE_URL}}</a></dd></div>
+    <div><dt>Reviewed by</dt><dd>{{HUMAN_REVIEWER}} and {{SECURITY_REVIEWER}} (security), <a href="{{PULL_URL}}">pull request #{{PULL}}</a></dd></div>
+  </dl>
+  <ul class="entry__evidence" aria-label="Artifacts">
+    {{{ARTIFACT_ITEMS}}}
+  </ul>
+</li>

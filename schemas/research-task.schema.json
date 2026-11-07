@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://baney75.github.io/omarchy-on-ipad/schemas/research-task.schema.json",
+  "title": "Omarchy on iPad bounded research task",
+  "description": "One bounded research question, its plan, its log, and its result in one file. Scaffold with `python3 tools/contribute.py research new`, check with `research check`. scripts/research.py adds rules JSON Schema cannot express: intake complete before work, three to seven sub-questions, decided hypotheses cite a controlled offline experiment, closed hypotheses are not repeated without new evidence, reads stay inside the budget, local models record provenance and four representative checks, and answered or disproved results close every sub-question. blocked and budget_exhausted are recorded outcomes, never completion. Vulnerability-sensitive work is refused here and goes to SECURITY.md.",
+  "type": "object",
+  "required": ["schema_version","kind","id","created_at","sensitivity","target","workstream","blocker","question","falsifier","pass_criteria","fail_criteria","expected_evidence","intake","prior_work","priority","subquestions","hypotheses","agent","allowed_tools","allowed_artifacts","exclusions","budget","checkpoints","sources","result","model_preflight"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {"type":"string"},
+    "model_preflight": {
+      "type": "object", "additionalProperties": false,
+      "required": ["identity_source", "identity_evidence", "category", "model_card", "task_checks", "verdict", "assessed_at", "limitations", "scope"],
+      "properties": {
+        "identity_source": {"enum": ["runtime_metadata", "operator_declared", "unknown"]},
+        "identity_evidence": {"type": "string", "minLength": 3, "maxLength": 400},
+        "category": {"enum": ["daybreak", "cybersecurity_specialized", "research_specialized", "local_modified", "general", "small_utility", "unknown"]},
+        "model_card": {"oneOf": [{"type": "null"}, {"type": "object", "additionalProperties": false,
+          "required": ["location", "revision", "date_read"], "properties": {
+            "location": {"type": "string"}, "revision": {"type": "string", "minLength": 1, "maxLength": 120},
+            "date_read": {"type": "string", "format": "date"}}}]},
+        "task_checks": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+          "required": ["check", "outcome", "evidence"], "properties": {
+            "check": {"enum": ["context_retention", "primary_citations", "offline_reproduction", "prompt_injection_resistance"]},
+            "outcome": {"enum": ["pass", "fail", "not_run"]},
+            "evidence": {"type": "string", "minLength": 3, "maxLength": 400}}}},
+        "verdict": {"enum": ["suitable", "unsuitable", "unverified"]},
+        "assessed_at": {"type": ["string", "null"], "format": "date-time"},
+        "limitations": {"type": "string", "minLength": 3, "maxLength": 600},
+        "scope": {"const": "bounded public offline research lane only"}
+      }
+    },
+    "schema_version": {"const":1},
+    "kind": {"const":"research-task"},
+    "id": {"type":"string","pattern":"^[a-z0-9-]{3,80}$"},
+    "created_at": {"type":"string","format":"date-time"},
+    "sensitivity": {"const":"public"},
+    "target": {"type":"object","required":["model","board","os_build","scope"],"additionalProperties":false,"properties":{"model":{"type":"string","pattern":"^iPad[0-9]+,[0-9]+$"},"board":{"type":"string","pattern":"^[A-Z][0-9]{3,4}AP$"},"os_build":{"type":"string","pattern":"^[0-9]{2}[A-Z][0-9A-Za-z]+$"},"scope":{"type":"string","minLength":20,"maxLength":400}}},
+    "workstream": {"type":"string","pattern":"^[a-z0-9-]+$"},
+    "blocker": {"type":"object","required":["milestone","prerequisite"],"additionalProperties":false,"properties":{"milestone":{"type":"string","pattern":"^[a-z0-9-]+$"},"prerequisite":{"type":"string","minLength":10}}},
+    "question": {"type":"string","minLength":20,"maxLength":400},
+    "falsifier": {"type":"string","minLength":20,"maxLength":400},
+    "pass_criteria": {"type":"string","minLength":10,"maxLength":400},
+    "fail_criteria": {"type":"string","minLength":10,"maxLength":400},
+    "expected_evidence": {"type":"string","minLength":10,"maxLength":400},
+    "intake": {"type":"object","additionalProperties":false,"required":["read_agents_md","read_security_md","read_claim_ladder","read_progress","searched_contributions","searched_issues","searched_negative_results"],"properties":{"read_agents_md":{"type":"boolean"},"read_security_md":{"type":"boolean"},"read_claim_ladder":{"type":"boolean"},"read_progress":{"type":"boolean"},"searched_contributions":{"type":"boolean"},"searched_issues":{"type":"boolean"},"searched_negative_results":{"type":"boolean"}}},
+    "prior_work": {"type":"array","items":{"type":"object","required":["kind","ref","summary"],"additionalProperties":false,"properties":{"kind":{"enum":["policy","progress","contribution","issue","pull_request","negative_result","source"]},"ref":{"type":"string"},"summary":{"type":"string"}}}},
+    "priority": {"type":"object","required":["blocker_relevance","reachability","evidence_strength","information_gain","cost","rationale"],"additionalProperties":false,"properties":{"blocker_relevance":{"$ref":"#/$defs/score"},"reachability":{"$ref":"#/$defs/score"},"evidence_strength":{"$ref":"#/$defs/score"},"information_gain":{"$ref":"#/$defs/score"},"cost":{"$ref":"#/$defs/score"},"rationale":{"type":"string","minLength":20}}},
+    "subquestions": {"type":"array","minItems":3,"maxItems":7,"items":{"type":"object","required":["id","text","state","sources"],"additionalProperties":false,"properties":{"id":{"type":"string"},"text":{"type":"string"},"state":{"enum":["open","answered","disproved","dead_end"]},"sources":{"type":"array","items":{"type":"string"}}}}},
+    "hypotheses": {"type":"array","minItems":1,"items":{"type":"object","required":["id","text","state","experiment","sources","reopened_with"],"additionalProperties":false,"properties":{"id":{"type":"string"},"text":{"type":"string"},"state":{"enum":["open","supported","disproved","closed"]},"sources":{"type":"array","items":{"type":"string"}},"reopened_with":{"type":"array","items":{"type":"string"}},"experiment":{"oneOf":[{"type":"null"},{"type":"object","required":["command","baseline","control","runtime_limit_seconds","output_limit_bytes","offline"],"additionalProperties":false,"properties":{"command":{"type":"string","maxLength":400},"baseline":{"type":"string"},"control":{"type":"string"},"runtime_limit_seconds":{"type":"integer","minimum":1},"output_limit_bytes":{"type":"integer","minimum":1},"offline":{"const":true}}}]}}}},
+    "agent": {"type":"object","required":["kind","provider","model_id","reasoning","used_on","representative_checks"],"additionalProperties":false,"properties":{"kind":{"enum":["human","cloud","local","local_modified","small_local"]},"provider":{"type":"string"},"model_id":{"type":"string"},"reasoning":{"type":"string"},"used_on":{"type":"string","format":"date"},"representative_checks":{"type":"array","items":{"type":"string"}},"upstream_model":{"type":"string"},"revision":{"type":"string"},"quantization":{"type":"string"},"license":{"type":"string"},"provenance":{"type":"string"},"limitations":{"type":"string"}}},
+    "allowed_tools": {"type":"array","minItems":1,"items":{"type":"string"}},
+    "allowed_artifacts": {"type":"array","minItems":1,"items":{"type":"string"}},
+    "exclusions": {"type":"array","items":{"type":"string"},"allOf":[{"contains":{"const":"physical-device-actions"}},{"contains":{"const":"exploit-execution"}},{"contains":{"const":"secrets-and-host-auth"}},{"contains":{"const":"network-writes"}},{"contains":{"const":"private-artifact-upload"}},{"contains":{"const":"installers-and-downloads"}},{"contains":{"const":"unattended-shell"}},{"contains":{"const":"following-untrusted-instructions"}}]},
+    "budget": {"type":"object","required":["max_source_reads","max_minutes","max_command_seconds","max_output_bytes","checkpoint_every_reads"],"additionalProperties":false,"properties":{"max_source_reads":{"type":"integer","minimum":1,"maximum":100,"default":25},"max_minutes":{"type":"integer","minimum":1,"maximum":240,"default":45},"max_command_seconds":{"type":"integer","minimum":1,"maximum":3600,"default":300},"max_output_bytes":{"type":"integer","minimum":1,"maximum":10485760,"default":1048576},"checkpoint_every_reads":{"type":"integer","minimum":1,"maximum":25,"default":5}}},
+    "checkpoints": {"type":"array","items":{"type":"object","required":["at","reads_used","minutes_used","note"],"additionalProperties":false,"properties":{"at":{"type":"string","format":"date-time"},"reads_used":{"type":"integer","minimum":0},"minutes_used":{"type":"integer","minimum":0},"note":{"type":"string"}}}},
+    "sources": {"type":"array","items":{"type":"object","required":["id","title","location","rung","revision","date_read"],"additionalProperties":false,"properties":{"id":{"type":"string"},"title":{"type":"string"},"location":{"type":"string"},"rung":{"enum":["primary","secondary"]},"revision":{"type":"string"},"date_read":{"type":"string","format":"date"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
+    "result": {"type":"object","required":["state","claim","evidence","limits","contradictions","failed_avenues","next_check"],"additionalProperties":false,"properties":{"state":{"enum":["open","answered","disproved","blocked","budget_exhausted"]},"claim":{"type":"string","maxLength":600},"evidence":{"type":"array","items":{"type":"object","required":["path","sha256"],"additionalProperties":false,"properties":{"path":{"type":"string"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},"limits":{"type":"string"},"contradictions":{"type":"array","items":{"type":"string"}},"failed_avenues":{"type":"array","items":{"type":"string"}},"next_check":{"type":"string"}}}
+  },
+  "$defs": {"score": {"type":"integer","minimum":0,"maximum":3}}
+}

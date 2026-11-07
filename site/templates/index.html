@@ -17,6 +17,8 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="{{SITE_URL}}">
+  <link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt">
+  <link rel="alternate" type="application/json" href="api/v1/index.json" title="Machine contract">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/site.css">
   <script src="assets/site.js" defer></script>
@@ -24,26 +26,7 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="wrap site-header__inner">
-      <a class="brand" href="./" aria-label="{{PROJECT_NAME}} home">
-        <svg class="brand__mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-          <path d="M9.5 19h-3A3.5 3.5 0 0 1 3 15.5v-7A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v7a3.5 3.5 0 0 1-3.5 3.5h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M12 21.5v-5.5a4 4 0 0 1 4-4h2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="brand__name">{{PROJECT_NAME}}</span>
-      </a>
-      <nav class="site-nav" aria-label="Sections">
-        <ul>
-          <li><a href="#status">Status</a></li>
-          <li><a href="#milestones">Milestones</a></li>
-          <li><a href="#work">Work</a></li>
-          <li><a href="#contribute">Contribute</a></li>
-          <li><a href="{{REPO_URL}}">Source</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+{{{SITE_HEADER}}}
 
   <main id="main" tabindex="-1">
 
@@ -85,6 +68,7 @@
         <dl class="reference">
           <div><dt>Reference target</dt><dd class="mono">{{REFERENCE_TARGET}}</dd></div>
           <div><dt>Reference build</dt><dd class="mono">{{REFERENCE_BUILD}}</dd></div>
+          <div><dt>Installation</dt><dd><a href="install/">{{INSTALL_STATE_LABEL}}</a></dd></div>
           <div><dt>Data updated</dt><dd><time datetime="{{UPDATED_AT}}" data-relative>{{UPDATED_AT_LABEL}}</time></dd></div>
         </dl>
       </div>
@@ -110,6 +94,15 @@
           <div><dt><span class="state state--complete">Complete</span></dt><dd>Every check in the milestone passed on real hardware.</dd></div>
         </dl>
       </details>
+    </section>
+
+    <!-- Devices: the hardware being worked on, from goal and coverage records only. -->
+    <section class="section wrap" id="devices" aria-labelledby="devices-title">
+      <div class="section__head">
+        <h2 id="devices-title">Devices being worked on</h2>
+        <p class="section__sub">Taken from the public reference target and coverage records. No other hardware detail is published.</p>
+      </div>
+      {{{DEVICE_ITEMS}}}
     </section>
 
     <!-- Ledger: keep verified facts, open hypotheses and blocked work apart. -->
@@ -189,32 +182,31 @@
     <!-- Contribute: safe, bounded requests. -->
     <section class="section wrap" id="contribute" aria-labelledby="contribute-title">
       <div class="section__head">
-        <h2 id="contribute-title">Contribute a device result</h2>
-        <p class="section__sub">Each request is bounded and says what it touches. Claim only what your evidence proves.</p>
+        <h2 id="contribute-title">Contribute</h2>
+        <p class="section__sub">Design, docs, tools, drivers, bug fixes, device records, and research are all welcome. Pick one lane; each has its own start steps and checks. Claim only what your evidence proves.</p>
       </div>
+      <ul class="lanes">
+        {{{LANE_ITEMS}}}
+      </ul>
+      <div class="contribute__links">
+        <a class="action-link" href="{{LANES_URL}}">Lane rules and checks</a>
+        <a class="action-link" href="{{BUG_REPORT_URL}}">Report a bug</a>
+        <a class="action-link" href="{{RESEARCH_PLAYBOOK_URL}}">Start bounded research</a>
+      </div>
+      <p class="disclosure">Research starts with a model suitability check and stops on a written budget. Nothing here picks up issues or runs agents automatically, and a person reviews every pull request.</p>
+      <h3 class="subhead contribute__requests">Open requests</h3>
       <ul class="requests">
         {{{REQUEST_ITEMS}}}
       </ul>
       <div class="contribute__foot">
         <a class="action-link" href="{{CONTRIBUTE_URL}}">Read the contribution guide</a>
+        <p class="disclosure">Agents and tools: start at <a href="llms.txt">llms.txt</a> or the versioned <a href="api/v1/index.json">machine contract</a>. Reviewed results appear in the <a href="registry/">registry</a>.</p>
         <p class="disclosure">Found a possible entry path? Report it privately through the <a href="{{SECURITY_URL}}">security policy</a>, not in a public issue.</p>
       </div>
     </section>
 
   </main>
 
-  <footer class="site-footer">
-    <div class="wrap site-footer__inner">
-      <p class="site-footer__brand">
-        <svg class="brand__mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-          <path d="M9.5 19h-3A3.5 3.5 0 0 1 3 15.5v-7A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v7a3.5 3.5 0 0 1-3.5 3.5h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M12 21.5v-5.5a4 4 0 0 1 4-4h2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        {{PROJECT_NAME}}
-      </p>
-      <p>An unofficial community research project. Not affiliated with, endorsed by, or sponsored by Apple Inc. or the Omarchy project. iPad and Apple silicon are trademarks of Apple Inc.; Omarchy belongs to its authors.</p>
-      <p class="site-footer__meta">Built <time datetime="{{GENERATED_AT}}">{{GENERATED_AT_LABEL}}</time> from commit <a class="mono" href="{{COMMIT_URL}}">{{COMMIT_SHORT}}</a>. No cookies, analytics or trackers.</p>
-    </div>
-  </footer>
+{{{SITE_FOOTER}}}
 </body>
 </html>

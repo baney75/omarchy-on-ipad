@@ -1,9 +1,11 @@
 # Claude Code instructions
 
-Read and follow [`AGENTS.md`](AGENTS.md) in full. It is the canonical agent contract for this repository.
+[`AGENTS.md`](AGENTS.md) is the canonical contract for this repository. Read it in full and follow it; this file adds no policy of its own and grants no permission.
 
-Before editing, restate the bounded question, files you own, and the check that will prove the task is done. Do not weaken the truth, privacy, artifact, physical-safety, or coordinated-disclosure gates. Do not edit `data/progress.json`, workflow permissions, `SECURITY.md`, `TRADEMARKS.md`, or `CODEOWNERS` unless the task names that file.
+Before editing, do the mandatory checks from AGENTS.md:
 
-Design work must preserve semantic HTML, WCAG AA body contrast, keyboard focus, reduced-motion behavior, 390 px and 1280 px layouts, local-only assets, and the explicit statement that Linux has not booted and Omarchy is not installed.
+1. Classify the work into one [contribution lane](AGENTS.md#contribution-lanes) and read that lane's policies (`python3 tools/contribute.py lanes`).
+2. For substantive security or boot-chain research, run the [research model preflight](AGENTS.md#research-model-preflight) first and stop if it is blocked. Design, docs, tooling, and record formatting do not need it.
+3. Restate the bounded task, the paths you own, and the check that proves it done.
 
-Finish with the commands run, their results, and any claim that remains unverified.
+Do not edit `data/progress.json`, `data/installation.json`, workflow permissions, `SECURITY.md`, `TRADEMARKS.md`, or `CODEOWNERS` unless the task names that file. Finish with the commands run, their results, and any claim that remains unverified.

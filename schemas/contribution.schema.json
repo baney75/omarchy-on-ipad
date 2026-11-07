@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://baney75.github.io/omarchy-on-ipad/schemas/contribution.schema.json",
   "title": "Omarchy on iPad contribution record",
+  "description": "One bounded, read-only contribution. Contributors submit with status 'submitted' and no review. Only a maintainer named in CODEOWNERS, who is not the contributor, may add a review and set a reviewed status. scripts/validate.py also checks that every evidence file exists and matches its hash.",
   "type": "object",
   "required": ["id","status","contributor","agent","device","workstream","claim","evidence","safety","recorded_at"],
   "additionalProperties": false,
@@ -14,8 +15,12 @@
     "device": {"type":"object","required":["model","board","os_build"],"additionalProperties":false,"properties":{"model":{"type":"string","pattern":"^iPad[0-9]+,[0-9]+$"},"board":{"type":"string","pattern":"^[A-Z][0-9]{3,4}AP$"},"os_build":{"type":"string","pattern":"^[0-9]{2}[A-Z][0-9A-Za-z]+$"}}},
     "workstream": {"type":"string","pattern":"^[a-z0-9-]+$"},
     "claim": {"type":"string","minLength":20,"maxLength":1000},
-    "evidence": {"type":"array","minItems":1,"items":{"type":"object","required":["kind","path","sha256"],"additionalProperties":false,"properties":{"kind":{"enum":["command-output","source-citation","screenshot","test-report"]},"path":{"type":"string","pattern":"^(contributions|docs)/[A-Za-z0-9._/-]+$"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
-    "safety": {"type":"object","required":["read_only","malformed_input","storage_write","reboot_or_recovery"],"additionalProperties":false,"properties":{"read_only":{"type":"boolean"},"malformed_input":{"const":false},"storage_write":{"const":false},"reboot_or_recovery":{"const":false}}},
-    "recorded_at": {"type":"string","format":"date-time"}
-  }
+    "evidence": {"type":"array","minItems":1,"items":{"type":"object","required":["kind","path","sha256"],"additionalProperties":false,"properties":{"kind":{"enum":["command-output","source-citation","screenshot","test-report","research-task"]},"path":{"type":"string","maxLength":240,"pattern":"^(contributions/[A-Za-z0-9-]{1,39}/|docs/)[A-Za-z0-9_-][A-Za-z0-9._/-]*\\.(txt|json|md|csv|log|png)$"},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
+    "safety": {"type":"object","required":["read_only","malformed_input","storage_write","reboot_or_recovery"],"additionalProperties":false,"properties":{"read_only":{"const":true},"malformed_input":{"const":false},"storage_write":{"const":false},"reboot_or_recovery":{"const":false}}},
+    "recorded_at": {"type":"string","format":"date-time"},
+    "review": {"type":"object","description":"Added by a maintainer, never by the contributor.","required":["reviewer","reviewed_at","pull_request","summary"],"additionalProperties":false,"properties":{"reviewer":{"type":"string","pattern":"^[A-Za-z0-9-]{1,39}$"},"reviewed_at":{"type":"string","format":"date-time"},"pull_request":{"type":"integer","minimum":1},"summary":{"type":"string","minLength":20,"maxLength":600}}}
+  },
+  "allOf": [
+    {"if":{"properties":{"status":{"const":"submitted"}}},"then":{"not":{"required":["review"]}},"else":{"required":["review"]}}
+  ]
 }
