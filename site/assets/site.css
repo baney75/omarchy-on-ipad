@@ -85,6 +85,7 @@ img, svg { display: block; max-width: 100%; }
 
 a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
 a:hover { text-decoration-thickness: 2px; }
+dd > a { display: inline-flex; align-items: center; min-height: 24px; }
 
 :focus-visible { outline: var(--focus); outline-offset: 3px; border-radius: var(--r-sm); }
 main:focus { outline: none; }
