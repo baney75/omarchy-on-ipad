@@ -1,0 +1,12 @@
+<li class="milestone milestone--{{STATE}}" id="milestone-{{ID}}">
+  <div class="milestone__head">
+    <h3 class="milestone__name">{{NAME}}</h3>
+    {{{STATE_BADGE}}}
+  </div>
+  <p class="milestone__summary">{{SUMMARY}}</p>
+  <div class="milestone__checks">
+    <span class="pips" aria-hidden="true">{{{CHECK_PIPS}}}</span>
+    <span class="milestone__count"><strong>{{PASSED}}</strong> of {{TOTAL}} checks</span>
+    <span class="milestone__evidence">Evidence <time datetime="{{EVIDENCE_AT}}">{{EVIDENCE_AT_LABEL}}</time></span>
+  </div>
+</li>

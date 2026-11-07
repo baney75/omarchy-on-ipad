@@ -1,0 +1,28 @@
+{
+  "$schema": "../../schemas/contribution.schema.json",
+  "id": "your-handle-read-only-inventory",
+  "status": "submitted",
+  "contributor": "your-github-handle",
+  "agent": "human, Daybreak, or local agent name and version",
+  "device": {
+    "model": "iPad13,8",
+    "board": "J522AP",
+    "os_build": "24B119"
+  },
+  "workstream": "device-matrix",
+  "claim": "Describe one bounded result without claiming more than the evidence proves.",
+  "evidence": [
+    {
+      "kind": "command-output",
+      "path": "contributions/your-handle/example/receipt.txt",
+      "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    }
+  ],
+  "safety": {
+    "read_only": true,
+    "malformed_input": false,
+    "storage_write": false,
+    "reboot_or_recovery": false
+  },
+  "recorded_at": "2026-11-07T00:00:00Z"
+}

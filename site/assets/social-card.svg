@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Omarchy on iPad — unofficial community research</title>
+  <desc id="desc">Live evidence-backed progress toward native, untethered Omarchy on Apple-silicon iPads.</desc>
+  <rect width="1200" height="630" fill="#0f1113"/>
+  <path d="M0 505h1200M0 506h1200" stroke="#24282d"/>
+  <path d="M0 96h1200" stroke="#24282d"/>
+  <g transform="translate(72 48) scale(2)" fill="none" stroke="#c8f03c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.5 19h-3A3.5 3.5 0 0 1 3 15.5v-7A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v7a3.5 3.5 0 0 1-3.5 3.5h-3"/>
+    <path d="M12 21.5v-5.5a4 4 0 0 1 4-4h2.5"/>
+  </g>
+  <text x="132" y="82" fill="#f3eee4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="25" font-weight="650">Omarchy on iPad</text>
+  <rect x="72" y="156" width="126" height="34" rx="4" fill="none" stroke="#5b626b"/>
+  <text x="91" y="179" fill="#f3eee4" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" letter-spacing="1.5">UNOFFICIAL</text>
+  <text x="72" y="278" fill="#f3eee4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="70" font-weight="700">Native Omarchy on</text>
+  <text x="72" y="358" fill="#f3eee4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="70" font-weight="700">Apple-silicon iPads.</text>
+  <text x="72" y="421" fill="#b3ada2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="25">The untethered goal, tracked in public with evidence.</text>
+  <g transform="translate(932 174)" fill="none" stroke="#343a41" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M80 248H34c-29 0-52-23-52-52V56C-18 27 5 4 34 4h176c29 0 52 23 52 52v140c0 29-23 52-52 52h-46"/>
+    <path d="M122 286v-88c0-35 29-64 64-64h59" stroke="#c8f03c"/>
+  </g>
+  <text x="72" y="565" fill="#8f8a81" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">baney75.github.io/omarchy-on-ipad</text>
+</svg>

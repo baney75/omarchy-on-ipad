@@ -1,0 +1,47 @@
+name: Research task
+description: Propose or claim one bounded offline research task.
+title: "research: "
+labels: [research, needs-triage]
+body:
+  - type: dropdown
+    id: workstream
+    attributes:
+      label: Workstream
+      options:
+        - Boot entry research
+        - J522 Linux board support
+        - Device and build matrix
+        - Omarchy platform integration
+        - Public infrastructure
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Bounded question
+      description: Ask one question whose answer changes an implementation decision.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Pass/fail done check
+      description: Name the check that will close this task.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Primary sources or exact inputs
+      description: Link original documentation/source or identify exact public versions and hashes.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-lane confirmation
+      options:
+        - label: This task is offline or read-only and does not require exploit details or a risky physical operation.
+          required: true
+        - label: I will not attach firmware, system binaries, credentials, identifiers, or third-party material without a redistribution license.
+          required: true

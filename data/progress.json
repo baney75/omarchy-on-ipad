@@ -1,0 +1,47 @@
+{
+  "$schema": "../schemas/progress.schema.json",
+  "project": {
+    "name": "Omarchy on iPad",
+    "tagline": "An open path to native Omarchy on Apple-silicon iPads",
+    "unofficial": true,
+    "updated_at": "2026-11-07T20:00:00Z"
+  },
+  "goal": {
+    "summary": "Boot and run Omarchy natively on Apple-silicon iPad hardware with an untethered cold start and usable built-in hardware.",
+    "current_truth": "Native Linux has not booted on the reference iPad, and Omarchy is not installed.",
+    "reference_target": "iPad Pro 12.9-inch (5th generation), iPad13,8 / J522AP / Apple M1",
+    "reference_build": "iPadOS 27.2 / 24B119"
+  },
+  "milestones": [
+    {"id":"evidence","name":"Evidence and safe bench","state":"active","passed":3,"total":4,"evidence_at":"2026-11-07T19:00:00Z","summary":"Reference hardware, firmware, backup metadata, and offline artifacts are identified; restore recovery is not yet proven."},
+    {"id":"entry","name":"Native execution entry","state":"blocked","passed":0,"total":3,"evidence_at":"2026-11-07T19:00:00Z","summary":"No reproducible production-J522 custom-kernel execution path is established."},
+    {"id":"linux-ram","name":"Linux in RAM","state":"blocked","passed":0,"total":4,"evidence_at":"2026-11-07T19:00:00Z","summary":"The offline RAM bundle exists, but the device cannot start it yet."},
+    {"id":"hardware","name":"Hardware bring-up","state":"prepared","passed":0,"total":8,"evidence_at":"2026-11-07T19:00:00Z","summary":"Board, display, touch, Pencil, storage, power, USB, and network work is mapped but not physically verified in Linux."},
+    {"id":"omarchy","name":"Omarchy integration","state":"verified_offline","passed":2,"total":5,"evidence_at":"2026-11-07T19:00:00Z","summary":"ARM userspace and a J522 platform delta pass offline checks; no device installation has occurred."},
+    {"id":"untethered","name":"Untethered installed system","state":"blocked","passed":0,"total":5,"evidence_at":"2026-11-07T19:00:00Z","summary":"Requires native entry, storage/recovery safety, repeated cold boots, and full acceptance."}
+  ],
+  "workstreams": [
+    {"id":"boot-entry","name":"Boot entry research","state":"active","needs":"Exact production-J522 execution authority or a reproducible early-boot path","skills":["Apple boot chain","iOS security","m1n1"]},
+    {"id":"j522-linux","name":"J522 Linux board support","state":"prepared","needs":"Kernel developers for device tree, DCP, touch, Pencil, power, and Wi-Fi","skills":["Linux kernel","Asahi Linux","device trees"]},
+    {"id":"device-matrix","name":"Device and build matrix","state":"active","needs":"Owners of Apple-silicon iPads with Macs who can run read-only collection","skills":["macOS","Xcode command-line tools","evidence capture"]},
+    {"id":"omarchy-port","name":"Omarchy platform integration","state":"verified_offline","needs":"Arch/Omarchy packaging and rollback review","skills":["Arch Linux","Btrfs","packaging"]}
+  ],
+  "updates": [
+    {"date":"2026-11-07","title":"Shared-cache parser pass closed","state":"verified_offline","summary":"Exact archive, XML, XSLT, compression, and live HID code comparisons produced no native-entry candidate."},
+    {"date":"2026-11-07","title":"Wi-Fi service reachability measured","state":"verified_physical","summary":"Valid open-only diagnostics found the live Wi-Fi services; ordinary development-app opens were denied and no method was called."},
+    {"date":"2026-11-07","title":"Omarchy userspace delta verified","state":"verified_offline","summary":"The ARM userspace image and proposed J522 platform files pass offline integrity and lifecycle checks within their stated scope."}
+  ],
+  "hypotheses": [
+    {"text":"A production-J522 path may eventually transfer control to a custom first-stage loader, but no qualifying route is established.","source":"Boot-entry workstream; unverified"},
+    {"text":"Reusable Apple M1 Linux drivers may cover part of J522 bring-up after entry, while iPad-specific DCP, touch, Pencil, power, and wireless work remains.","source":"J522 Linux workstream; source-backed hypothesis"}
+  ],
+  "requests": [
+    {"id":"readonly-device-inventory","title":"Add an Apple-silicon iPad to the matrix","detail":"Run the repository's allowlisted read-only collector on a Mac, inspect its sanitized JSON, and submit it with your exact model and build.","safety":"Read-only metadata collection; no reboot, recovery, or malformed input","workstream":"device-matrix"},
+    {"id":"j522-driver-map","title":"Review one J522 Linux hardware gap","detail":"Choose one bounded display, touch, Pencil, storage, power, USB, or Wi-Fi question and attach primary-source evidence plus a falsifiable next check.","safety":"Offline source and artifact analysis","workstream":"j522-linux"},
+    {"id":"boot-entry-evidence","title":"Privately report an entry path","detail":"If you have a production Apple-silicon iPad execution path, use private vulnerability reporting before posting details or payloads.","safety":"Private report only; no public exploit payloads","workstream":"boot-entry"}
+  ],
+  "coverage": [
+    {"family":"M1 iPad Pro","models":["iPad13,8"],"builds":["24B119"],"contributors":1,"level":"reference"}
+  ],
+  "counts": {"physical_linux_boots":0,"untethered_cold_boots":0,"installed_systems":0,"contributor_devices":1}
+}

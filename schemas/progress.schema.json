@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://baney75.github.io/omarchy-on-ipad/schemas/progress.schema.json",
+  "title": "Omarchy on iPad public progress",
+  "type": "object",
+  "required": ["project", "goal", "milestones", "workstreams", "updates", "coverage", "counts"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {"type": "string"},
+    "project": {"type":"object","required":["name","tagline","unofficial","updated_at"],"additionalProperties":false,"properties":{"name":{"type":"string","minLength":1},"tagline":{"type":"string","minLength":1},"unofficial":{"const":true},"updated_at":{"type":"string","format":"date-time"}}},
+    "goal": {"type":"object","required":["summary","current_truth","reference_target","reference_build"],"additionalProperties":false,"properties":{"summary":{"type":"string"},"current_truth":{"type":"string"},"reference_target":{"type":"string"},"reference_build":{"type":"string"}}},
+    "milestones": {"type":"array","minItems":1,"items":{"$ref":"#/$defs/milestone"}},
+    "workstreams": {"type":"array","minItems":1,"items":{"$ref":"#/$defs/workstream"}},
+    "updates": {"type":"array","items":{"$ref":"#/$defs/update"}},
+    "hypotheses": {"type":"array","items":{"type":"object","required":["text","source"],"additionalProperties":false,"properties":{"text":{"type":"string"},"source":{"type":"string"}}}},
+    "requests": {"type":"array","items":{"$ref":"#/$defs/request"}},
+    "coverage": {"type":"array","items":{"$ref":"#/$defs/coverage"}},
+    "counts": {"type":"object","required":["physical_linux_boots","untethered_cold_boots","installed_systems","contributor_devices"],"additionalProperties":false,"properties":{"physical_linux_boots":{"type":"integer","minimum":0},"untethered_cold_boots":{"type":"integer","minimum":0},"installed_systems":{"type":"integer","minimum":0},"contributor_devices":{"type":"integer","minimum":0}}}
+  },
+  "$defs": {
+    "state": {"enum":["blocked","active","prepared","verified_offline","verified_physical","complete"]},
+    "milestone": {"type":"object","required":["id","name","state","passed","total","summary","evidence_at"],"additionalProperties":false,"properties":{"id":{"type":"string","pattern":"^[a-z0-9-]+$"},"name":{"type":"string"},"state":{"$ref":"#/$defs/state"},"passed":{"type":"integer","minimum":0},"total":{"type":"integer","minimum":1},"summary":{"type":"string"},"evidence_at":{"type":"string","format":"date-time"}}},
+    "workstream": {"type":"object","required":["id","name","state","needs","skills"],"additionalProperties":false,"properties":{"id":{"type":"string","pattern":"^[a-z0-9-]+$"},"name":{"type":"string"},"state":{"$ref":"#/$defs/state"},"needs":{"type":"string"},"skills":{"type":"array","items":{"type":"string"},"minItems":1}}},
+    "update": {"type":"object","required":["date","title","state","summary"],"additionalProperties":false,"properties":{"date":{"type":"string","format":"date"},"title":{"type":"string"},"state":{"$ref":"#/$defs/state"},"summary":{"type":"string"}}},
+    "request": {"type":"object","required":["id","title","detail","safety","workstream"],"additionalProperties":false,"properties":{"id":{"type":"string","pattern":"^[a-z0-9-]+$"},"title":{"type":"string"},"detail":{"type":"string"},"safety":{"type":"string"},"workstream":{"type":"string","pattern":"^[a-z0-9-]+$"}}},
+    "coverage": {"type":"object","required":["family","models","builds","contributors","level"],"additionalProperties":false,"properties":{"family":{"type":"string"},"models":{"type":"array","items":{"type":"string"},"minItems":1},"builds":{"type":"array","items":{"type":"string"},"minItems":1},"contributors":{"type":"integer","minimum":1},"level":{"enum":["reported","reference","verified_offline","verified_physical"]}}}
+  }
+}

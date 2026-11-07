@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this research, cite the repository and the exact commit you relied on."
+title: "Omarchy on iPad: Unofficial Community Research"
+type: software
+authors:
+  - family-names: Baney
+    given-names: Donovan
+repository-code: "https://github.com/baney75/omarchy-on-ipad"
+url: "https://baney75.github.io/omarchy-on-ipad/"
+license: MIT
+version: 0.1.0
+date-released: 2026-11-07
+keywords:
+  - iPad
+  - Apple silicon
+  - Linux
+  - Omarchy
+  - J522AP
+  - hardware bring-up

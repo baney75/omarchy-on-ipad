@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/baney75/omarchy-on-ipad/security/advisories/new
+    about: Report possible entry paths, platform vulnerabilities, unsafe operations, or privacy leaks privately.
+  - name: Live dashboard
+    url: https://baney75.github.io/omarchy-on-ipad/
+    about: See current progress, blockers, coverage, and open contribution requests.

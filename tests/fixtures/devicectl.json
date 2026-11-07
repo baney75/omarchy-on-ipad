@@ -1,0 +1,12 @@
+{
+  "result": {
+    "devices": [
+      {
+        "identifier": "SECRET-DEVICE-ID",
+        "deviceProperties": {"name": "Private device name", "osVersionNumber": "27.2", "osBuildUpdate": "24B119", "developerModeStatus": "enabled"},
+        "hardwareProperties": {"productType": "iPad13,8", "hardwareModel": "J522AP", "platform": "iOS", "serialNumber": "PRIVATE123"},
+        "connectionProperties": {"transportType": "wired", "tunnelIPAddress": "192.0.2.2"}
+      }
+    ]
+  }
+}

@@ -1,0 +1,69 @@
+name: Device result
+description: Add a sanitized, read-only Apple-silicon iPad result to the public matrix.
+title: "device: "
+labels: [device-result, needs-review]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use only a device you own or are authorized to test. Do not include a name, serial number, UDID, ECID, Apple ID, address, local path, hostname, pairing record, nonce, ticket, key, token, or firmware file.
+  - type: input
+    id: model
+    attributes:
+      label: Model identifier
+      description: Example format only — use the sanitized collector output.
+      placeholder: iPad13,8
+    validations:
+      required: true
+  - type: input
+    id: board
+    attributes:
+      label: Board identifier
+      placeholder: J522AP
+    validations:
+      required: true
+  - type: input
+    id: build
+    attributes:
+      label: OS build
+      placeholder: 24B119
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: Bounded result
+      description: State one result and what it does not prove.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Paste allowlisted collector JSON or link to a small text receipt. Read it first.
+      render: json
+    validations:
+      required: true
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Who produced the result?
+      options:
+        - Human only
+        - Human with GPT-6 Daybreak
+        - Human with Claude Code
+        - Human with a local agent
+        - Another disclosed agent
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: This used read-only metadata collection only.
+          required: true
+        - label: No malformed input, device write, reboot, recovery action, or exploit payload was used.
+          required: true
+        - label: I inspected the evidence and removed private identifiers and paths.
+          required: true
