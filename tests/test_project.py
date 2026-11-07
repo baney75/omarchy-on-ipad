@@ -46,6 +46,7 @@ class ProjectTests(unittest.TestCase):
         payload = json.loads((ROOT / "tests/fixtures/devicectl.json").read_text(encoding="utf-8"))
         clean = collector.sanitize(payload)
         rendered = json.dumps(clean)
+        self.assertEqual(len(clean["devices"]), 1)
         self.assertEqual(clean["devices"][0]["model"], "iPad13,8")
         self.assertEqual(clean["devices"][0]["board"], "J522AP")
         for forbidden in ("SECRET-DEVICE-ID", "Private device name", "PRIVATE123", "192.0.2.2", "serial", "identifier"):

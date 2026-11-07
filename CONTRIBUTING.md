@@ -24,7 +24,7 @@ python3 tools/collect_readonly.py --output my-device.json
 cat my-device.json
 ```
 
-Read the output. It should contain only model, board, platform, OS version/build, transport, and developer-mode state. If anything identifying appears, do not share it; open a normal bug report describing the field name without its value.
+Read the output. It should contain only physical iPads and their model, board, platform, OS version/build, transport, and developer-mode state. Raw `devicectl` output is suppressed. If anything identifying appears, do not share it; open a normal bug report describing the field name without its value.
 
 Open the **Device result** issue form and attach the sanitized JSON, or turn it into a structured contribution record using `data/contributions/example.json.example`.
 

@@ -4,8 +4,20 @@
       {
         "identifier": "SECRET-DEVICE-ID",
         "deviceProperties": {"name": "Private device name", "osVersionNumber": "27.2", "osBuildUpdate": "24B119", "developerModeStatus": "enabled"},
-        "hardwareProperties": {"productType": "iPad13,8", "hardwareModel": "J522AP", "platform": "iOS", "serialNumber": "PRIVATE123"},
+        "hardwareProperties": {"productType": "iPad13,8", "hardwareModel": "J522AP", "platform": "iOS", "reality": "physical", "serialNumber": "PRIVATE123"},
         "connectionProperties": {"transportType": "wired", "tunnelIPAddress": "192.0.2.2"}
+      },
+      {
+        "identifier": "SIMULATOR-ID",
+        "deviceProperties": {"name": "Simulator", "osVersionNumber": "27.0", "osBuildUpdate": "24A000"},
+        "hardwareProperties": {"productType": "iPad17,4", "hardwareModel": "J821", "platform": "iOS", "reality": "simulated"},
+        "connectionProperties": {"transportType": "sameMachine"}
+      },
+      {
+        "identifier": "PHONE-ID",
+        "deviceProperties": {"name": "Phone", "osVersionNumber": "27.0", "osBuildUpdate": "24A000"},
+        "hardwareProperties": {"productType": "iPhone18,1", "hardwareModel": "V53AP", "platform": "iOS", "reality": "physical"},
+        "connectionProperties": {"transportType": "localNetwork"}
       }
     ]
   }

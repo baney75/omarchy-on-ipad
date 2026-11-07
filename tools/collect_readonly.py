@@ -40,12 +40,16 @@ def sanitize(payload: dict) -> dict:
             "model": first(hardware, "productType", "marketingName"),
             "board": first(hardware, "hardwareModel", "boardId"),
             "platform": first(hardware, "platform"),
+            "reality": first(hardware, "reality"),
             "os_version": first(device, "osVersionNumber", "osVersion"),
             "os_build": first(device, "osBuildUpdate", "buildVersion"),
             "transport": first(connection, "transportType"),
             "developer_mode": first(device, "developerModeStatus"),
         }
         record = {key: value for key, value in record.items() if value is not None}
+        if not str(record.get("model", "")).startswith("iPad") or record.get("reality") != "physical":
+            continue
+        record.pop("reality", None)
         key = tuple(sorted(record.items()))
         if record and key not in seen:
             seen.add(key)
@@ -56,7 +60,15 @@ def sanitize(payload: dict) -> dict:
 def collect() -> dict:
     with tempfile.TemporaryDirectory(prefix="omarchy-ipad-inventory-") as directory:
         output = Path(directory) / "devices.json"
-        subprocess.run(["xcrun", "devicectl", "list", "devices", "--json-output", str(output)], check=True)
+        result = subprocess.run(
+            ["xcrun", "devicectl", "list", "devices", "--json-output", str(output)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+        if result.returncode:
+            raise RuntimeError(f"devicectl failed with exit code {result.returncode}; raw output was suppressed")
         return json.loads(output.read_text(encoding="utf-8"))
 
 
