@@ -4,7 +4,7 @@
     "name": "Omarchy on iPad",
     "tagline": "An open path to native Omarchy on Apple-silicon iPads",
     "unofficial": true,
-    "updated_at": "2026-11-07T20:36:54Z"
+    "updated_at": "2026-11-07T20:45:10Z"
   },
   "goal": {
     "summary": "Boot and run Omarchy natively on Apple-silicon iPad hardware with an untethered cold start and usable built-in hardware.",
@@ -27,7 +27,7 @@
     {"id":"omarchy-port","name":"Omarchy platform integration","state":"verified_offline","needs":"Arch/Omarchy packaging and rollback review","skills":["Arch Linux","Btrfs","packaging"]}
   ],
   "updates": [
-    {"date":"2026-11-07","title":"CoreText closed; VideoToolbox trace narrowed","state":"active","summary":"Exact offline comparison closed two CoreText function changes. A VideoToolbox validation delta remains under private source-to-sink review; no physical test or native-entry route is established."},
+    {"date":"2026-11-07","title":"CoreText and VideoToolbox deltas closed","state":"verified_offline","summary":"Exact offline comparison closed the CoreText changes and traced VideoToolbox's new empty-container checks to an existing CoreMedia pre-read bound. No memory sink, physical test, or native-entry route survived."},
     {"date":"2026-11-07","title":"Public research hub launched","state":"complete","summary":"The sanitized repository and live dashboard are public, with structured progress issues, CI, secret and malware scans, CodeQL, and a protected main branch."},
     {"date":"2026-11-07","title":"Shared-cache parser pass closed","state":"verified_offline","summary":"Exact archive, XML, XSLT, compression, and live HID code comparisons produced no native-entry candidate."},
     {"date":"2026-11-07","title":"Wi-Fi service reachability measured","state":"verified_physical","summary":"Valid open-only diagnostics found the live Wi-Fi services; ordinary development-app opens were denied and no method was called."},
