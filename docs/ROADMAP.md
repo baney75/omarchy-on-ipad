@@ -8,7 +8,8 @@ The roadmap is dependency ordered. Dates do not override evidence gates.
 - [x] Structured progress and contribution schemas
 - [x] Live GitHub Pages dashboard source
 - [x] Agent, security, attribution, and governance contracts
-- [ ] Public deployment and first external device contribution
+- [x] Public deployment
+- [ ] First external device contribution
 
 ## 1. Evidence and safe bench
 
