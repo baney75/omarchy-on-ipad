@@ -4,7 +4,7 @@
     "name": "Omarchy on iPad",
     "tagline": "An open path to native Omarchy on Apple-silicon iPads",
     "unofficial": true,
-    "updated_at": "2026-11-07T22:48:37Z"
+    "updated_at": "2026-11-08T00:00:13Z"
   },
   "goal": {
     "summary": "Boot and run Omarchy natively on Apple-silicon iPad hardware with an untethered cold start and usable built-in hardware.",
@@ -27,6 +27,7 @@
     {"id":"omarchy-port","name":"Omarchy platform integration","state":"verified_offline","needs":"Arch/Omarchy packaging and rollback review","skills":["Arch Linux","Btrfs","packaging"]}
   ],
   "updates": [
+    {"date":"2026-11-07","title":"Controlled mode-entry attempt closed safely","state":"verified_physical","summary":"One separately approved private mode-entry attempt reached recovery rather than DFU. The passive provenance collector did not run, and the same device returned booted and paired on 24B119. A revised registry-only timing protocol passed offline review but is not authorized. Linux boot and installation counts remain zero."},
     {"date":"2026-11-07","title":"mBoot delta narrowed; ROM provenance remains open","state":"verified_offline","summary":"Exact offline comparison found no native-entry route in the reviewed recovery path or bounded high-signal mBoot residuals. Physical ROM provenance remains unresolved; one registry-only observation is prepared but has not run. No recovery, USB request, payload, or device trial occurred."},
     {"date":"2026-11-07","title":"QUIC delta closed offline","state":"verified_offline","summary":"Exact comparison classified all eight resized common libquic functions and the new helper as 0-RTT state, packet-queue, and TLS setup changes. No old memory sink or native-entry route survived; no network or device trial ran."},
     {"date":"2026-11-07","title":"CoreText and VideoToolbox deltas closed","state":"verified_offline","summary":"Exact offline comparison closed the CoreText changes and traced VideoToolbox's new empty-container checks to an existing CoreMedia pre-read bound. No memory sink, physical test, or native-entry route survived."},
