@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-07",
+  "problems": [
+    "agents: CLAUDE.md is other, not an @AGENTS.md import",
+    "agents: stale path in AGENTS.md: api/vN/index.json",
+    "readme: README has no ## Install (or Get started/Quick start) heading"
+  ]
+}
