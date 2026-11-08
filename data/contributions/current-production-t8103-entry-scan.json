@@ -1,0 +1,28 @@
+{
+  "$schema": "../../schemas/contribution.schema.json",
+  "id": "current-production-t8103-entry-scan",
+  "status": "submitted",
+  "contributor": "baney75",
+  "agent": "OpenAI gpt-daybreak-blue-latest, xhigh reasoning, 2026-11-08",
+  "device": {
+    "model": "iPad13,8",
+    "board": "J522AP",
+    "os_build": "24B119"
+  },
+  "workstream": "boot-entry",
+  "claim": "Five pinned public primary sources were classified offline and none establishes a reproducible production T8103 execution path or custom-loader handoff applicable to iPad13,8 / J522AP build 24B119.",
+  "evidence": [
+    {
+      "kind": "research-task",
+      "path": "contributions/baney75/research/current-production-t8103-entry-scan.json",
+      "sha256": "87683f1b55d400a7e65ec9168ba44fddfe74a79c143f1e015b495838668941bb"
+    }
+  ],
+  "safety": {
+    "read_only": true,
+    "malformed_input": false,
+    "storage_write": false,
+    "reboot_or_recovery": false
+  },
+  "recorded_at": "2026-11-08T19:50:38Z"
+}

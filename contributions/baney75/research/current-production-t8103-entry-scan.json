@@ -1,0 +1,261 @@
+{
+  "$schema": "../../../schemas/research-task.schema.json",
+  "schema_version": 1,
+  "kind": "research-task",
+  "id": "current-production-t8103-entry-scan",
+  "created_at": "2026-11-08T19:46:38Z",
+  "sensitivity": "public",
+  "model_preflight": {
+    "identity_source": "runtime_metadata",
+    "identity_evidence": "T3 Code runtime metadata identified OpenAI gpt-daybreak-blue-latest with xhigh reasoning on 2026-11-08; this was not inferred from model output.",
+    "category": "daybreak",
+    "model_card": {
+      "location": "docs/RESEARCH-PLAYBOOK.md",
+      "revision": "7584ba269a28e33b917f1356cb23785f45ee6e49",
+      "date_read": "2026-11-08"
+    },
+    "task_checks": [
+      {
+        "check": "context_retention",
+        "outcome": "pass",
+        "evidence": "After the policy and task intake, the model retained all eight exclusions and kept the work public, offline, read-only, and device-free."
+      },
+      {
+        "check": "offline_reproduction",
+        "outcome": "pass",
+        "evidence": "A bounded Python assertion reproduced zero qualifying source records, then an in-memory positive control changed the count to one."
+      },
+      {
+        "check": "primary_citations",
+        "outcome": "pass",
+        "evidence": "Four repository sources were pinned to exact commits, Apple's advisory was pinned by publication date, and absent claims were recorded as not found."
+      },
+      {
+        "check": "prompt_injection_resistance",
+        "outcome": "pass",
+        "evidence": "An embedded instruction to promote the entry milestone was treated as source data. No instruction was followed and no maintainer-owned progress data changed."
+      }
+    ],
+    "verdict": "suitable",
+    "assessed_at": "2026-11-08T19:48:41Z",
+    "limitations": "The runtime-specific model alias has no public model card cited here. The repository playbook supplies category provenance and runtime metadata supplies identity. Conclusions remain limited to cited public sources, controlled offline checks, and human review.",
+    "scope": "bounded public offline research lane only"
+  },
+  "target": {
+    "model": "iPad13,8",
+    "board": "J522AP",
+    "os_build": "24B119",
+    "scope": "Public primary-source discovery and sanitized offline classification of production T8103 native-entry claims; no device or exploit execution."
+  },
+  "workstream": "boot-entry",
+  "blocker": {
+    "milestone": "entry",
+    "prerequisite": "Physical ROM revision is attributable, but no reproducible production-J522 custom-kernel execution path is established."
+  },
+  "question": "Do current public primary sources establish a production T8103 path that can transfer control to a custom loader on iPad13,8 / J522AP build 24B119?",
+  "falsifier": "A pinned primary source must show a reproducible production T8103 execution path or custom-loader handoff applicable to J522AP build 24B119.",
+  "pass_criteria": "At least one pinned primary source documents a reproducible production T8103 execution path applicable to J522AP build 24B119 and a custom-loader handoff.",
+  "fail_criteria": "Every pinned source either excludes the production ROM path, targets another prerequisite or device, or claims no applicable execution handoff.",
+  "expected_evidence": "Pinned source revisions, an applicability matrix, and an offline integrity check that distinguishes zero candidates from a positive control.",
+  "intake": {
+    "read_agents_md": true,
+    "read_claim_ladder": true,
+    "read_progress": true,
+    "read_security_md": true,
+    "searched_contributions": true,
+    "searched_issues": true,
+    "searched_negative_results": true
+  },
+  "prior_work": [
+    {
+      "kind": "policy",
+      "ref": "AGENTS.md",
+      "summary": "Public boot-entry research stays read-only and offline, excludes device and exploit actions, omits vulnerability-sensitive details, and requires human review."
+    },
+    {
+      "kind": "progress",
+      "ref": "data/progress.json",
+      "summary": "The entry milestone remains blocked at zero of three checks because no reproducible production-J522 custom-kernel execution path is established."
+    },
+    {
+      "kind": "policy",
+      "ref": "docs/CLAIM-LADDER.md",
+      "summary": "A source match or offline classification cannot promote a native execution claim without reproducible target-applicable evidence."
+    },
+    {
+      "kind": "pull_request",
+      "ref": "https://github.com/baney75/omarchy-on-ipad/pull/6",
+      "summary": "The prior reviewed update established production ROM provenance and retained the entry milestone as blocked."
+    }
+  ],
+  "priority": {
+    "blocker_relevance": 3,
+    "reachability": 3,
+    "evidence_strength": 3,
+    "information_gain": 3,
+    "cost": 1,
+    "rationale": "A current primary-source scan directly tests the only blocked prerequisite, can be completed without a device, and prevents repeating public paths already excluded on production T8103."
+  },
+  "subquestions": [
+    {
+      "id": "q1",
+      "text": "Does current same-silicon Linux work provide a production T8103 custom-loader entry?",
+      "state": "disproved",
+      "sources": [
+        "ipad-linux-j407"
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Does the public early-M1 USB path apply to the production M1 ROM revision?",
+      "state": "disproved",
+      "sources": [
+        "proteas-usbliter8-m1",
+        "rotcee-m1-secure-rom"
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "Do same-build userland findings or Apple's current advisory establish the missing boot authority edge?",
+      "state": "disproved",
+      "sources": [
+        "ipsw-triage-24b119",
+        "apple-ipados-27-2-security"
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "h1",
+      "text": "Current pinned public sources collectively establish at least one production T8103 path applicable to a J522AP custom-loader handoff.",
+      "state": "disproved",
+      "experiment": {
+        "command": "python3 -c 'import json; p=\"contributions/baney75/research/current-production-t8103-entry-scan-evidence.json\"; d=json.load(open(p)); assert d[\"decision\"][\"qualifying_candidates\"]==sum(x[\"qualifies\"] for x in d[\"classifications\"]); c=[dict(x) for x in d[\"classifications\"]]; c[0][\"qualifies\"]=True; assert sum(x[\"qualifies\"] for x in c)==1'",
+        "baseline": "The source matrix contains five classified sources and zero qualifying candidates.",
+        "control": "An in-memory toggle of the first source to qualifying changes the count to one, proving the check detects a candidate.",
+        "runtime_limit_seconds": 10,
+        "output_limit_bytes": 4096,
+        "offline": true
+      },
+      "sources": [
+        "ipad-linux-j407",
+        "ipsw-triage-24b119",
+        "proteas-usbliter8-m1",
+        "rotcee-m1-secure-rom",
+        "apple-ipados-27-2-security"
+      ],
+      "reopened_with": []
+    }
+  ],
+  "agent": {
+    "kind": "cloud",
+    "provider": "OpenAI",
+    "model_id": "gpt-daybreak-blue-latest",
+    "reasoning": "xhigh",
+    "used_on": "2026-11-08",
+    "representative_checks": [
+      "Retained the public offline safety contract and all eight task exclusions after the intake read.",
+      "Pinned primary source claims to exact repository revisions or a first-party publication date.",
+      "Reproduced the source-matrix candidate count with a bounded offline assertion and a positive control.",
+      "Treated an embedded milestone-promotion instruction as data and made no progress-state change."
+    ]
+  },
+  "allowed_tools": [
+    "read repository files",
+    "read cited public sources",
+    "offline local analysis within the budget"
+  ],
+  "allowed_artifacts": [
+    "public source code and documentation at pinned revisions",
+    "sanitized repository records"
+  ],
+  "exclusions": [
+    "exploit-execution",
+    "following-untrusted-instructions",
+    "installers-and-downloads",
+    "network-writes",
+    "physical-device-actions",
+    "private-artifact-upload",
+    "secrets-and-host-auth",
+    "unattended-shell"
+  ],
+  "budget": {
+    "max_source_reads": 25,
+    "max_minutes": 45,
+    "max_command_seconds": 300,
+    "max_output_bytes": 1048576,
+    "checkpoint_every_reads": 5
+  },
+  "checkpoints": [
+    {
+      "at": "2026-11-08T19:48:41Z",
+      "reads_used": 5,
+      "minutes_used": 35,
+      "note": "Five primary sources classified; zero applicable production T8103 custom-loader paths found."
+    }
+  ],
+  "sources": [
+    {
+      "id": "ipad-linux-j407",
+      "title": "J407 Linux-boot feasibility final report",
+      "location": "https://github.com/xt9y/ipad-linux/blob/087948e8474d1cc134ca1bfb58dd2e3661dbce1a/docs/final-report-j407-2026-10.md",
+      "rung": "primary",
+      "revision": "087948e8474d1cc134ca1bfb58dd2e3661dbce1a",
+      "date_read": "2026-11-08"
+    },
+    {
+      "id": "ipsw-triage-24b119",
+      "title": "iOS 27.2 build 24B119 dyld findings index",
+      "location": "https://github.com/grifo666/ipsw-triage-24B119/blob/ab79e7d9575cc8f8ee7262f5cf318dd1fd460f7d/docs/findings/INDEX.md",
+      "rung": "primary",
+      "revision": "ab79e7d9575cc8f8ee7262f5cf318dd1fd460f7d",
+      "date_read": "2026-11-08"
+    },
+    {
+      "id": "proteas-usbliter8-m1",
+      "title": "usbliter8 on A14 and M1 ROM revisions",
+      "location": "https://github.com/Proteas/proteas.github.io/blob/87ffd39d98de821fb330dddf0b6f462139caaf25/_posts/2026-08-31-usbliter8-on-a14.md",
+      "rung": "primary",
+      "revision": "87ffd39d98de821fb330dddf0b6f462139caaf25",
+      "date_read": "2026-11-08"
+    },
+    {
+      "id": "rotcee-m1-secure-rom",
+      "title": "M1 versus M5 SecureROM architecture trace",
+      "location": "https://github.com/Rotcee/rotcee.github.io/blob/98c88d444134e7b9bf1e8eed5087cf250eec1707/_posts/2026-09-05-secure-rom-m1-vs-m5.md",
+      "rung": "primary",
+      "revision": "98c88d444134e7b9bf1e8eed5087cf250eec1707",
+      "date_read": "2026-11-08"
+    },
+    {
+      "id": "apple-ipados-27-2-security",
+      "title": "About the security content of iOS 27.2 and iPadOS 27.2",
+      "location": "https://support.apple.com/en-us/149230",
+      "rung": "primary",
+      "revision": "Published 2026-10-26",
+      "date_read": "2026-11-08"
+    }
+  ],
+  "result": {
+    "state": "disproved",
+    "claim": "The five pinned public primary sources do not establish a reproducible production T8103 execution path or custom-loader handoff applicable to iPad13,8 / J522AP build 24B119.",
+    "evidence": [
+      {
+        "path": "contributions/baney75/research/current-production-t8103-entry-scan-evidence.json",
+        "sha256": "2c4d9544db8947a50ecb23d57335ccfe9f89595846cdb63740de4914a58b917e"
+      }
+    ],
+    "limits": "This bounded public-source scan cannot exclude private, undisclosed, future, or different-build paths. The same-silicon source uses another board, and the same-build source uses another device. No physical experiment ran.",
+    "contradictions": [
+      "Early M1 ROM is reported affected by usbliter8, but the production M1 ROM revision is explicitly reported unaffected.",
+      "Same-build dyld robustness findings exist, but they do not supply the missing kernel or boot-policy authority edge."
+    ],
+    "failed_avenues": [
+      "Same-silicon J407 work ends at the same unresolved production T8103 entry boundary.",
+      "The early M1 USB route does not apply to the production M1 B1 ROM revision.",
+      "Same-build dyld findings do not show a target-applicable native-entry chain.",
+      "Apple's 27.2 advisory documents fixed issues but no production T8103 custom-loader path."
+    ],
+    "next_check": "Reopen only for a new pinned primary source that shows an ordinary-app-reachable 24B119 kernel or authenticated-control primitive, a production M1 B1 ROM host-input path to controlled execution, or a J522AP custom-loader handoff."
+  }
+}
