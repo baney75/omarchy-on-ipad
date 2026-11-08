@@ -4,7 +4,7 @@
     "name": "Omarchy on iPad",
     "tagline": "An open path to native Omarchy on Apple-silicon iPads",
     "unofficial": true,
-    "updated_at": "2026-11-08T04:17:37Z"
+    "updated_at": "2026-11-08T04:34:06Z"
   },
   "goal": {
     "summary": "Boot and run Omarchy natively on Apple-silicon iPad hardware with an untethered cold start and usable built-in hardware.",
@@ -14,7 +14,7 @@
   },
   "milestones": [
     {"id":"evidence","name":"Evidence and safe bench","state":"active","passed":3,"total":4,"evidence_at":"2026-11-08T04:13:13Z","summary":"Reference hardware, physical ROM revision, firmware, backup metadata, and offline artifacts are identified; restore recovery is not yet proven."},
-    {"id":"entry","name":"Native execution entry","state":"blocked","passed":0,"total":3,"evidence_at":"2026-11-08T04:13:13Z","summary":"Physical ROM revision is attributable, but no reproducible production-J522 custom-kernel execution path is established."},
+    {"id":"entry","name":"Native execution entry","state":"blocked","passed":0,"total":3,"evidence_at":"2026-11-08T04:34:06Z","summary":"Physical ROM revision is attributable, but no reproducible production-J522 custom-kernel execution path is established."},
     {"id":"linux-ram","name":"Linux in RAM","state":"blocked","passed":0,"total":4,"evidence_at":"2026-11-07T19:00:00Z","summary":"The offline RAM bundle exists, but the device cannot start it yet."},
     {"id":"hardware","name":"Hardware bring-up","state":"prepared","passed":0,"total":8,"evidence_at":"2026-11-07T19:00:00Z","summary":"Board, display, touch, Pencil, storage, power, USB, and network work is mapped but not physically verified in Linux."},
     {"id":"omarchy","name":"Omarchy integration","state":"verified_offline","passed":2,"total":5,"evidence_at":"2026-11-07T19:00:00Z","summary":"ARM userspace and a J522 platform delta pass offline checks; no device installation has occurred."},
@@ -27,6 +27,7 @@
     {"id":"omarchy-port","name":"Omarchy platform integration","state":"verified_offline","needs":"Arch/Omarchy packaging and rollback review","skills":["Arch Linux","Btrfs","packaging"]}
   ],
   "updates": [
+    {"date":"2026-11-08","title":"Three production-ROM gaps closed offline","state":"verified_offline","summary":"Bounded static review of the matching public ROM revision found that the accepted first-stage payload remains bound to its authenticated manifest, reviewed parser spans stay contained, and legal DFU transfer sequences do not expose stale state. No execution or signature-bypass candidate survived. This is not byte-for-byte proof of the physical ROM or a general impossibility result, and no device operation occurred."},
     {"date":"2026-11-08","title":"Physical ROM revision provenance resolved","state":"verified_physical","summary":"A separately approved registry-only observation confirmed exactly one DFU service, then captured CPID 8103, board ID 18, and SRTG iBoot-5540.0.0.400.2 with zero USB requests. The same device returned booted and paired on 24B119. This identifies the ROM revision but does not provide code execution, a signature bypass, Linux boot, or installation."},
     {"date":"2026-11-07","title":"Controlled mode-entry attempt closed safely","state":"verified_physical","summary":"One separately approved private mode-entry attempt reached recovery rather than DFU. The passive provenance collector did not run, and the same device returned booted and paired on 24B119. A revised registry-only timing protocol passed offline review but is not authorized. Linux boot and installation counts remain zero."},
     {"date":"2026-11-07","title":"mBoot delta narrowed; ROM provenance remains open","state":"verified_offline","summary":"Exact offline comparison found no native-entry route in the reviewed recovery path or bounded high-signal mBoot residuals. Physical ROM provenance remains unresolved; one registry-only observation is prepared but has not run. No recovery, USB request, payload, or device trial occurred."},
