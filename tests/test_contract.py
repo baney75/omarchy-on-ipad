@@ -217,14 +217,17 @@ class ContributionReviewTests(SandboxCase):
 
 class RegistryAndSiteTests(SandboxCase):
     def test_only_reviewed_records_are_listed_and_html_is_escaped(self):
+        baseline = [json.loads(path.read_text(encoding="utf-8")) for path in (self.box.root / "data/contributions").glob("*.json")]
+        baseline_pending = sum(record["status"] == "submitted" for record in baseline)
+        baseline_reviewed = sorted(record["id"] for record in baseline if record["status"] != "submitted")
         self.box.write(self.box.record("octo-pending"))
         self.box.write(self.box.record("octo-reviewed", status="verified_offline", claim="Escaping check <script>alert(1)</script> & done.", review=self.box.review()))
         output = self.box.build()
         registry = json.loads((output / "api/v1/registry.json").read_text(encoding="utf-8"))
-        self.assertEqual([entry["id"] for entry in registry["entries"]], ["octo-reviewed"])
-        self.assertEqual(registry["summary"]["awaiting_review"], 1)
-        self.assertEqual(registry["summary"]["reviewed"], 1)
-        entry = registry["entries"][0]
+        self.assertEqual([entry["id"] for entry in registry["entries"]], sorted(baseline_reviewed + ["octo-reviewed"]))
+        self.assertEqual(registry["summary"]["awaiting_review"], baseline_pending + 1)
+        self.assertEqual(registry["summary"]["reviewed"], len(baseline_reviewed) + 1)
+        entry = next(item for item in registry["entries"] if item["id"] == "octo-reviewed")
         self.assertEqual(entry["review"]["pull_request_url"], f"{REPO}/pull/12")
         self.assertTrue(entry["evidence"][0]["url"].startswith(f"{REPO}/blob/main/contributions/"))
         page = (output / "registry/index.html").read_text(encoding="utf-8")
