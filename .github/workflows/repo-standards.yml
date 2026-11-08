@@ -11,7 +11,7 @@ on:
 permissions: {}
 jobs:
   standards:
-    uses: baney75/.github/.github/workflows/repo-standards.yml@main
+    uses: baney75/.github/.github/workflows/repo-standards.yml@f35b248d3f0f99e135e97f633894aa392c0378da  # main
     permissions:
       contents: read
       actions: read
